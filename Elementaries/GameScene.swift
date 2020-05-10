@@ -9,81 +9,91 @@
 import SpriteKit
 import GameplayKit
 
+struct GameConfiguration {
+    struct Field {
+        let rows: Int
+        let columns: Int
+    }
+    
+    let field: Field
+    
+    let bubbleRadius: CGFloat
+    let bubbleDistance: CGFloat
+}
+
+enum GameState {
+    case initialized
+    case playing
+    case finished
+}
+
 class GameScene: SKScene {
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var configuration: GameConfiguration = .init(
+        field: .init(rows: 6, columns: 4),
+        bubbleRadius: 50,
+        bubbleDistance: 20
+    )
+    
+    var state: GameState = .initialized
     
     override func didMove(to view: SKView) {
+        drawBubbles()
+    }
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
-        }
-        
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
-    }
-    
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+        for touch in touches {
+            let location = touch.location(in: self)
+            if let bubble = atPoint(location) as? BubbleNode {
+                bubble.select()
+            }
         }
-        
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
-    }
-    
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        for touch in touches {
+            let location = touch.location(in: self)
+            if let bubble = atPoint(location) as? BubbleNode {
+                bubble.unselect()
+            }
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        for touch in touches {
+            let location = touch.location(in: self)
+            if let bubble = atPoint(location) as? BubbleNode {
+                bubble.unselect()
+            }
+        }
     }
-    
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+    }
+    
+    private func drawBubbles() {
+        
+        let bubbleDiameter = 2 * configuration.bubbleRadius
+        
+        let rows = configuration.field.rows
+        let columns = configuration.field.columns
+        
+        let fieldWidth = CGFloat(columns) * bubbleDiameter + CGFloat(columns - 1) * configuration.bubbleDistance
+        let fieldHeight = CGFloat(rows) * bubbleDiameter + CGFloat(rows - 1) * configuration.bubbleDistance
+        
+        let startX = -fieldWidth / 2
+        let startY = -fieldHeight / 2
+                
+        for row in 0..<rows {
+            for column in 0..<columns {
+                let x = startX + CGFloat(column) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
+                let y = startY + CGFloat(row) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
+                
+                let node = BubbleNode.create(with: "H", radius: configuration.bubbleRadius)
+                node.position = .init(x: x, y: y)
+                addChild(node)
+            }
+        }
     }
 }
