@@ -27,11 +27,11 @@ class GameScene: SKScene {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        unselectBubbles()
+        finishTouch()
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        unselectBubbles()
+        finishTouch()
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -45,16 +45,14 @@ class GameScene: SKScene {
         guard let bubble = atPoint(touch.location(in: self)) as? BubbleNode else { return }
 
         if selectedBubbles.isEmpty {
-            bubble.select()
-            selectedBubbles.append(bubble)
+            selectBubble(bubble)
         } else if let lastBubble = selectedBubbles.last, checkNeighborBubbles(first: lastBubble, second: bubble) {
-            bubble.select()
-            selectedBubbles.append(bubble)
+            selectBubble(bubble)
         }
     }
     
-    private func finishTouch(_ touch: UITouch) {
-        
+    private func finishTouch() {
+        unselectBubbles()
     }
     
     private func drawBubbles() {
@@ -92,6 +90,12 @@ class GameScene: SKScene {
     
     private func drawBubblesTitles() {
         let matrix = composer.matrix
+                
+        guard matrix.count == configuration.field.rows, matrix.reduce(true, { result, row in
+            result && (row.count == configuration.field.columns)
+        }) else {
+            fatalError("Invalid game matrix")
+        }
         
         for (rowIndex, row) in matrix.enumerated() {
             for (columnIndex, text) in row.enumerated() {
@@ -114,8 +118,17 @@ class GameScene: SKScene {
         return distance == 1
     }
     
+    private func selectBubble(_ bubble: BubbleNode) {
+        guard !selectedBubbles.contains(bubble) else { return }
+        
+        selectedBubbles.append(bubble)
+        bubble.select()
+        
+        print("BAD: \(bubble.text)")
+    }
+    
     private func unselectBubbles() {
-        bubbles.forEach { $0.forEach { $0.unselect() } }
         selectedBubbles.removeAll()
+        bubbles.forEach { $0.forEach { $0.unselect() } }
     }
 }

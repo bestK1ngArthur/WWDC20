@@ -19,7 +19,7 @@ class BubbleNode: SKShapeNode {
         let node = BubbleNode(circleOfRadius: radius)
         
         node.name = "bubble_node"
-        node.fillColor = .blue
+        node.fillColor = .systemBlue
         node.lineWidth = 0
         node.addChild(node.label)
                 
@@ -30,6 +30,8 @@ class BubbleNode: SKShapeNode {
         guard !isSelected else { return }
         
         isSelected = true
+
+        fillColor = .systemGreen
         
         removeAction(forKey: "unselect")
         run(.scale(by: 1.2, duration: 0.2), withKey: "select")
@@ -39,6 +41,8 @@ class BubbleNode: SKShapeNode {
         guard isSelected else { return }
         
         isSelected = false
+        
+        fillColor = .systemBlue
         
         removeAction(forKey: "select")
         run(.scale(by: 1/1.2, duration: 0.2), withKey: "unselect")

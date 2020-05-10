@@ -20,7 +20,7 @@ struct GameConfiguration {
     let bubbleDistance: CGFloat
     
     static let `default`: GameConfiguration = .init(
-        field: .init(rows: 4, columns: 3),
+        field: .init(rows: 4, columns: 4),
         bubbleRadius: 50,
         bubbleDistance: 20
     )
