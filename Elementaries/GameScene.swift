@@ -43,16 +43,27 @@ class GameScene: SKScene {
     
     private func handleTouch(_ touch: UITouch) {
         guard let bubble = atPoint(touch.location(in: self)) as? BubbleNode else { return }
-
-        if selectedBubbles.isEmpty {
-            selectBubble(bubble)
-        } else if let lastBubble = selectedBubbles.last, checkNeighborBubbles(first: lastBubble, second: bubble) {
-            selectBubble(bubble)
+        
+        if let index = selectedBubbles.lastIndex(of: bubble) {
+            let lastIndex = index + 1
+            
+            if lastIndex < selectedBubbles.count {
+                let lastBubbles = selectedBubbles.suffix(from: index + 1)
+                lastBubbles.forEach { unselectBubble($0) }
+            }
+            
+        } else {
+            
+            if selectedBubbles.isEmpty {
+                selectBubble(bubble)
+            } else if let lastBubble = selectedBubbles.last, checkNeighborBubbles(first: lastBubble, second: bubble) {
+                selectBubble(bubble)
+            }
         }
     }
     
     private func finishTouch() {
-        unselectBubbles()
+        bubbles.forEach { $0.forEach { unselectBubble($0) } }
     }
     
     private func drawBubbles() {
@@ -123,12 +134,12 @@ class GameScene: SKScene {
         
         selectedBubbles.append(bubble)
         bubble.select()
-        
-        print("BAD: \(bubble.text)")
     }
     
-    private func unselectBubbles() {
-        selectedBubbles.removeAll()
-        bubbles.forEach { $0.forEach { $0.unselect() } }
+    private func unselectBubble(_ bubble: BubbleNode) {
+        guard let index = selectedBubbles.lastIndex(of: bubble) else { return }
+        
+        selectedBubbles.remove(at: index)
+        bubble.unselect()
     }
 }
