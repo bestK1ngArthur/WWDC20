@@ -10,5 +10,5 @@ import Foundation
 
 struct Element {
     let name: String
-    let count: Int
+    let index: Int?
 }

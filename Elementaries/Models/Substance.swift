@@ -9,6 +9,22 @@
 import Foundation
 
 struct Substance {
+    typealias Component = String
+    
     let name: String
     let elements: [Element]
+    
+    var components: [Component] {
+        var components: [Component] = []
+        
+        elements.forEach { element in
+            components.append(element.name)
+            
+            if let index = element.index {
+                components.append("\(index)")
+            }
+        }
+        
+        return components
+    }
 }

@@ -10,23 +10,41 @@ import SpriteKit
 
 class BubbleNode: SKShapeNode {
     
-    static func create(with text: String, radius: CGFloat) -> BubbleNode {
+    var text: String? {
+        get { label.text }
+        set { label.text = newValue }
+    }
+    
+    static func create(radius: CGFloat) -> BubbleNode {
         let node = BubbleNode(circleOfRadius: radius)
         
-        node.name = "element_node"
+        node.name = "bubble_node"
         node.fillColor = .blue
         node.lineWidth = 0
-        
+        node.addChild(node.label)
+                
         return node
     }
     
     func select() {
+        guard !isSelected else { return }
+        
+        isSelected = true
+        
         removeAction(forKey: "unselect")
-        run(.scale(by: 1.2, duration: 0.25), withKey: "select")
+        run(.scale(by: 1.2, duration: 0.2), withKey: "select")
     }
     
     func unselect() {
+        guard isSelected else { return }
+        
+        isSelected = false
+        
         removeAction(forKey: "select")
-        run(.scale(by: 0.84, duration: 0.25), withKey: "unselect")
+        run(.scale(by: 1/1.2, duration: 0.2), withKey: "unselect")
     }
+    
+    private var isSelected = false
+    
+    private let label: SKLabelNode = .init()
 }

@@ -7,69 +7,54 @@
 //
 
 import SpriteKit
-import GameplayKit
-
-struct GameConfiguration {
-    struct Field {
-        let rows: Int
-        let columns: Int
-    }
-    
-    let field: Field
-    
-    let bubbleRadius: CGFloat
-    let bubbleDistance: CGFloat
-}
-
-enum GameState {
-    case initialized
-    case playing
-    case finished
-}
 
 class GameScene: SKScene {
     
-    var configuration: GameConfiguration = .init(
-        field: .init(rows: 6, columns: 4),
-        bubbleRadius: 50,
-        bubbleDistance: 20
-    )
-    
-    var state: GameState = .initialized
-    
+    let configuration: GameConfiguration = .default
+    let composer: GameComposer = .init()
+        
     override func didMove(to view: SKView) {
         drawBubbles()
+        drawBubblesTitles()
     }
         
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch.location(in: self)
-            if let bubble = atPoint(location) as? BubbleNode {
-                bubble.select()
-            }
-        }
+        for touch in touches { handleTouch(touch) }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches { handleTouch(touch) }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch.location(in: self)
-            if let bubble = atPoint(location) as? BubbleNode {
-                bubble.unselect()
-            }
-        }
+        unselectBubbles()
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let location = touch.location(in: self)
-            if let bubble = atPoint(location) as? BubbleNode {
-                bubble.unselect()
-            }
-        }
+        unselectBubbles()
     }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+    }
+    
+    private var bubbles: [[BubbleNode]] = []
+    private var selectedBubbles: [BubbleNode] = []
+    
+    private func handleTouch(_ touch: UITouch) {
+        guard let bubble = atPoint(touch.location(in: self)) as? BubbleNode else { return }
+
+        if selectedBubbles.isEmpty {
+            bubble.select()
+            selectedBubbles.append(bubble)
+        } else if let lastBubble = selectedBubbles.last, checkNeighborBubbles(first: lastBubble, second: bubble) {
+            bubble.select()
+            selectedBubbles.append(bubble)
+        }
+    }
+    
+    private func finishTouch(_ touch: UITouch) {
+        
     }
     
     private func drawBubbles() {
@@ -84,16 +69,53 @@ class GameScene: SKScene {
         
         let startX = -fieldWidth / 2
         let startY = -fieldHeight / 2
-                
+        
+        var bubbles: [[BubbleNode]] = []
         for row in 0..<rows {
+            var bubblesRow: [BubbleNode] = []
+            
             for column in 0..<columns {
                 let x = startX + CGFloat(column) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
                 let y = startY + CGFloat(row) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
                 
-                let node = BubbleNode.create(with: "H", radius: configuration.bubbleRadius)
+                let node = BubbleNode.create(radius: configuration.bubbleRadius)
                 node.position = .init(x: x, y: y)
                 addChild(node)
+                
+                bubblesRow.append(node)
+            }
+            
+            bubbles.append(bubblesRow)
+        }
+        self.bubbles = bubbles.reversed()
+    }
+    
+    private func drawBubblesTitles() {
+        let matrix = composer.matrix
+        
+        for (rowIndex, row) in matrix.enumerated() {
+            for (columnIndex, text) in row.enumerated() {
+                let bubbleNode = bubbles[rowIndex][columnIndex]
+                bubbleNode.text = text
             }
         }
+    }
+    
+    private func checkNeighborBubbles(first: BubbleNode, second: BubbleNode) -> Bool {
+        guard let firstRow = bubbles.firstIndex(where: { $0.contains(first) }),
+              let firstColumn = bubbles[firstRow].firstIndex(where: { $0 == first }),
+              let secondRow = bubbles.firstIndex(where: { $0.contains(second) }),
+              let secondColumn = bubbles[secondRow].firstIndex(where: { $0 == second }) else {
+            return false
+        }
+        
+        let distance = abs(secondRow - firstRow) + abs(secondColumn - firstColumn)
+        
+        return distance == 1
+    }
+    
+    private func unselectBubbles() {
+        bubbles.forEach { $0.forEach { $0.unselect() } }
+        selectedBubbles.removeAll()
     }
 }
