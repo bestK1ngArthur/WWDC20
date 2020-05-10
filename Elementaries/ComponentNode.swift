@@ -36,7 +36,7 @@ class ComponentNode: SKShapeNode {
         let node = ComponentNode(circleOfRadius: radius)
         
         node.name = "component_node"
-        node.fillColor = .systemBlue
+        node.fillColor = .systemIndigo
         node.lineWidth = 0
         node.addChild(node.label)
         
@@ -57,14 +57,14 @@ class ComponentNode: SKShapeNode {
     private let label: SKLabelNode = .init()
 
     private func select() {
-        fillColor = .systemIndigo
+        fillColor = .systemBlue
         
         removeAction(forKey: ActionKey.unselect.rawValue)
         run(.scale(by: 2 * maxRadius / frame.width, duration: 0.2), withKey: ActionKey.select.rawValue)
     }
     
     private func unselect() {
-        fillColor = .systemBlue
+        fillColor = .systemIndigo
         
         removeAction(forKey: ActionKey.select.rawValue)
         run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
