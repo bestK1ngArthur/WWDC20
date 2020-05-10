@@ -18,4 +18,8 @@ class GameComposer {
         ["9", "10", "11", "12"],
         ["13", "14", "15", "16"]
     ]
+    
+    func checkComponents(_ compontent: [String]) -> Bool {
+        return true
+    }
 }

@@ -44,6 +44,8 @@ class GameScene: SKScene {
     private func handleTouch(_ touch: UITouch) {
         guard let bubble = atPoint(touch.location(in: self)) as? BubbleNode else { return }
         
+        guard bubble.state != .solved else { return }
+        
         if let index = selectedBubbles.lastIndex(of: bubble) {
             let lastIndex = index + 1
             
@@ -63,7 +65,13 @@ class GameScene: SKScene {
     }
     
     private func finishTouch() {
-        bubbles.forEach { $0.forEach { unselectBubble($0) } }
+        let components = selectedBubbles.compactMap { $0.text }
+        
+        if composer.checkComponents(components) {
+            selectedBubbles.forEach { solveBubble($0) }
+        } else {
+            bubbles.forEach { $0.forEach { unselectBubble($0) } }
+        }
     }
     
     private func drawBubbles() {
@@ -133,13 +141,20 @@ class GameScene: SKScene {
         guard !selectedBubbles.contains(bubble) else { return }
         
         selectedBubbles.append(bubble)
-        bubble.select()
+        bubble.state = .selected
     }
     
     private func unselectBubble(_ bubble: BubbleNode) {
         guard let index = selectedBubbles.lastIndex(of: bubble) else { return }
         
         selectedBubbles.remove(at: index)
-        bubble.unselect()
+        bubble.state = .unselected
+    }
+    
+    private func solveBubble(_ bubble: BubbleNode) {
+        guard let index = selectedBubbles.lastIndex(of: bubble) else { return }
+        
+        selectedBubbles.remove(at: index)
+        bubble.state = .solved
     }
 }
