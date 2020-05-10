@@ -1,5 +1,5 @@
 //
-//  BubbleNode.swift
+//  ComponentNode.swift
 //  Elementaries
 //
 //  Created by Artem Belkov on 10.05.2020.
@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class BubbleNode: SKShapeNode {
+class ComponentNode: SKShapeNode {
     enum State {
         case unselected
         case selected
@@ -20,12 +20,9 @@ class BubbleNode: SKShapeNode {
             guard state != oldValue else { return }
             
             switch state {
-            case .unselected:
-                unselect()
-            case .selected:
-                select()
-            case .solved:
-                solve()
+            case .unselected: unselect()
+            case .selected: select()
+            case .solved: solve()
             }
         }
     }
@@ -35,10 +32,10 @@ class BubbleNode: SKShapeNode {
         set { label.text = newValue }
     }
         
-    static func create(radius: CGFloat) -> BubbleNode {
-        let node = BubbleNode(circleOfRadius: radius)
+    static func create(radius: CGFloat) -> ComponentNode {
+        let node = ComponentNode(circleOfRadius: radius)
         
-        node.name = "bubble_node"
+        node.name = "component_node"
         node.fillColor = .systemBlue
         node.lineWidth = 0
         node.addChild(node.label)
@@ -48,30 +45,35 @@ class BubbleNode: SKShapeNode {
         
         return node
     }
+    
+    private enum ActionKey: String {
+        case select
+        case unselect
+    }
         
-    private var minRadius: CGFloat = 0
-    private var maxRadius: CGFloat = 0
+    private var minRadius: CGFloat!
+    private var maxRadius: CGFloat!
         
     private let label: SKLabelNode = .init()
 
     private func select() {
         fillColor = .systemIndigo
         
-        removeAction(forKey: "unselect")
-        run(.scale(by: 2 * maxRadius / frame.width, duration: 0.2), withKey: "select")
+        removeAction(forKey: ActionKey.unselect.rawValue)
+        run(.scale(by: 2 * maxRadius / frame.width, duration: 0.2), withKey: ActionKey.select.rawValue)
     }
     
     private func unselect() {
         fillColor = .systemBlue
         
-        removeAction(forKey: "select")
-        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: "unselect")
+        removeAction(forKey: ActionKey.select.rawValue)
+        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
     }
     
     private func solve() {
         fillColor = .systemGreen
 
-        removeAction(forKey: "select")
-        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: "unselect")
+        removeAction(forKey: ActionKey.select.rawValue)
+        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
     }
 }

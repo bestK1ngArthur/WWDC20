@@ -16,12 +16,12 @@ struct GameConfiguration {
     
     let field: Field
     
-    let bubbleRadius: CGFloat
-    let bubbleDistance: CGFloat
+    let componentRadius: CGFloat
+    let componentDistance: CGFloat
     
     static let `default`: GameConfiguration = .init(
         field: .init(rows: 4, columns: 4),
-        bubbleRadius: 50,
-        bubbleDistance: 20
+        componentRadius: 50,
+        componentDistance: 20
     )
 }

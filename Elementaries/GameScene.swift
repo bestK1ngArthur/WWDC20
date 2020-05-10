@@ -11,13 +11,13 @@ import SpriteKit
 class GameScene: SKScene {
     
     let configuration: GameConfiguration = .default
-    let composer: GameComposer = .init()
-        
+    let master: GameMaster = .init()
+    
     override func didMove(to view: SKView) {
-        drawBubbles()
-        drawBubblesTitles()
+        drawComponents()
+        drawComponentsTitles()
     }
-        
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches { handleTouch(touch) }
     }
@@ -25,7 +25,7 @@ class GameScene: SKScene {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches { handleTouch(touch) }
     }
-
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         finishTouch()
     }
@@ -34,81 +34,79 @@ class GameScene: SKScene {
         finishTouch()
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-    }
-    
-    private var bubbles: [[BubbleNode]] = []
-    private var selectedBubbles: [BubbleNode] = []
+    private var components: [[ComponentNode]] = []
+    private var selectedComponents: [ComponentNode] = []
     
     private func handleTouch(_ touch: UITouch) {
-        guard let bubble = atPoint(touch.location(in: self)) as? BubbleNode else { return }
+        guard let component = atPoint(touch.location(in: self)) as? ComponentNode else { return }
         
-        guard bubble.state != .solved else { return }
+        guard component.state != .solved else { return }
         
-        if let index = selectedBubbles.lastIndex(of: bubble) {
+        if let index = selectedComponents.lastIndex(of: component) {
             let lastIndex = index + 1
-            
-            if lastIndex < selectedBubbles.count {
-                let lastBubbles = selectedBubbles.suffix(from: index + 1)
-                lastBubbles.forEach { unselectBubble($0) }
+            if lastIndex < selectedComponents.count {
+                let lastComponents = selectedComponents.suffix(from: lastIndex)
+                lastComponents.forEach { unselectComponent($0) }
             }
-            
         } else {
-            
-            if selectedBubbles.isEmpty {
-                selectBubble(bubble)
-            } else if let lastBubble = selectedBubbles.last, checkNeighborBubbles(first: lastBubble, second: bubble) {
-                selectBubble(bubble)
+            if selectedComponents.isEmpty {
+                selectComponent(component)
+            } else if let lastComponent = selectedComponents.last, checkNeighborComponents(first: lastComponent, second: component) {
+                selectComponent(component)
             }
         }
     }
     
     private func finishTouch() {
-        let components = selectedBubbles.compactMap { $0.text }
+        let textComponents = selectedComponents.compactMap { $0.text }
         
-        if composer.checkComponents(components) {
-            selectedBubbles.forEach { solveBubble($0) }
+        if master.checkComponents(textComponents) {
+            selectedComponents.forEach { solveComponent($0) }
         } else {
-            bubbles.forEach { $0.forEach { unselectBubble($0) } }
+            components.forEach { row in
+                row.forEach { component in
+                    guard component.state == .selected else { return }
+                    unselectComponent(component)
+                }
+            }
         }
     }
     
-    private func drawBubbles() {
+    private func drawComponents() {
         
-        let bubbleDiameter = 2 * configuration.bubbleRadius
+        let componentDiameter = 2 * configuration.componentRadius
         
         let rows = configuration.field.rows
         let columns = configuration.field.columns
         
-        let fieldWidth = CGFloat(columns) * bubbleDiameter + CGFloat(columns - 1) * configuration.bubbleDistance
-        let fieldHeight = CGFloat(rows) * bubbleDiameter + CGFloat(rows - 1) * configuration.bubbleDistance
+        let fieldWidth = CGFloat(columns) * componentDiameter + CGFloat(columns - 1) * configuration.componentDistance
+        let fieldHeight = CGFloat(rows) * componentDiameter + CGFloat(rows - 1) * configuration.componentDistance
         
         let startX = -fieldWidth / 2
         let startY = -fieldHeight / 2
         
-        var bubbles: [[BubbleNode]] = []
+        var components: [[ComponentNode]] = []
         for row in 0..<rows {
-            var bubblesRow: [BubbleNode] = []
+            var componentsRow: [ComponentNode] = []
             
             for column in 0..<columns {
-                let x = startX + CGFloat(column) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
-                let y = startY + CGFloat(row) * (bubbleDiameter + configuration.bubbleDistance) + configuration.bubbleRadius
+                let x = startX + CGFloat(column) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
+                let y = startY + CGFloat(row) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
                 
-                let node = BubbleNode.create(radius: configuration.bubbleRadius)
+                let node = ComponentNode.create(radius: configuration.componentRadius)
                 node.position = .init(x: x, y: y)
                 addChild(node)
                 
-                bubblesRow.append(node)
+                componentsRow.append(node)
             }
             
-            bubbles.append(bubblesRow)
+            components.append(componentsRow)
         }
-        self.bubbles = bubbles.reversed()
+        self.components = components.reversed()
     }
     
-    private func drawBubblesTitles() {
-        let matrix = composer.matrix
+    private func drawComponentsTitles() {
+        let matrix = master.matrix
                 
         guard matrix.count == configuration.field.rows, matrix.reduce(true, { result, row in
             result && (row.count == configuration.field.columns)
@@ -118,43 +116,42 @@ class GameScene: SKScene {
         
         for (rowIndex, row) in matrix.enumerated() {
             for (columnIndex, text) in row.enumerated() {
-                let bubbleNode = bubbles[rowIndex][columnIndex]
-                bubbleNode.text = text
+                let componentNode = components[rowIndex][columnIndex]
+                componentNode.text = text
             }
         }
     }
     
-    private func checkNeighborBubbles(first: BubbleNode, second: BubbleNode) -> Bool {
-        guard let firstRow = bubbles.firstIndex(where: { $0.contains(first) }),
-              let firstColumn = bubbles[firstRow].firstIndex(where: { $0 == first }),
-              let secondRow = bubbles.firstIndex(where: { $0.contains(second) }),
-              let secondColumn = bubbles[secondRow].firstIndex(where: { $0 == second }) else {
+    private func checkNeighborComponents(first: ComponentNode, second: ComponentNode) -> Bool {
+        guard let firstRow = components.firstIndex(where: { $0.contains(first) }),
+              let firstColumn = components[firstRow].firstIndex(where: { $0 == first }),
+              let secondRow = components.firstIndex(where: { $0.contains(second) }),
+              let secondColumn = components[secondRow].firstIndex(where: { $0 == second }) else {
             return false
         }
         
         let distance = abs(secondRow - firstRow) + abs(secondColumn - firstColumn)
-        
         return distance == 1
     }
     
-    private func selectBubble(_ bubble: BubbleNode) {
-        guard !selectedBubbles.contains(bubble) else { return }
+    private func selectComponent(_ component: ComponentNode) {
+        guard !selectedComponents.contains(component) else { return }
         
-        selectedBubbles.append(bubble)
-        bubble.state = .selected
+        selectedComponents.append(component)
+        component.state = .selected
     }
     
-    private func unselectBubble(_ bubble: BubbleNode) {
-        guard let index = selectedBubbles.lastIndex(of: bubble) else { return }
+    private func unselectComponent(_ component: ComponentNode) {
+        guard let index = selectedComponents.lastIndex(of: component) else { return }
         
-        selectedBubbles.remove(at: index)
-        bubble.state = .unselected
+        selectedComponents.remove(at: index)
+        component.state = .unselected
     }
     
-    private func solveBubble(_ bubble: BubbleNode) {
-        guard let index = selectedBubbles.lastIndex(of: bubble) else { return }
+    private func solveComponent(_ component: ComponentNode) {
+        guard let index = selectedComponents.lastIndex(of: component) else { return }
         
-        selectedBubbles.remove(at: index)
-        bubble.state = .solved
+        selectedComponents.remove(at: index)
+        component.state = .solved
     }
 }
