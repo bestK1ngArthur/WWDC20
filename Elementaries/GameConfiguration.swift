@@ -22,6 +22,6 @@ struct GameConfiguration {
     static let `default`: GameConfiguration = .init(
         field: .init(rows: 4, columns: 4),
         componentRadius: 50,
-        componentDistance: 20
+        componentDistance: 30
     )
 }

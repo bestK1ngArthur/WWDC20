@@ -32,16 +32,22 @@ class ComponentNode: SKShapeNode {
         set { label.text = newValue }
     }
         
-    static func create(radius: CGFloat) -> ComponentNode {
-        let node = ComponentNode(circleOfRadius: radius)
+    static func create(with width: CGFloat) -> ComponentNode {
+                
+        let node = ComponentNode(
+            rect: .init(origin: .init(x: -width / 2, y: -width / 2),
+                        size: .init(width: width, height: width)),
+            cornerRadius: 6
+        )
         
         node.name = "component_node"
         node.fillColor = .systemIndigo
-        node.lineWidth = 0
+        node.strokeColor = .systemTeal
+        node.lineWidth = width / 10
         node.addChild(node.label)
         
-        node.minRadius = radius
-        node.maxRadius = 1.2 * radius
+        node.minWidth = node.frame.width
+        node.maxWidth = 1.1 * node.frame.width
         
         return node
     }
@@ -51,8 +57,8 @@ class ComponentNode: SKShapeNode {
         case unselect
     }
         
-    private var minRadius: CGFloat!
-    private var maxRadius: CGFloat!
+    private var minWidth: CGFloat!
+    private var maxWidth: CGFloat!
         
     private let label: SKLabelNode = .init()
 
@@ -60,20 +66,20 @@ class ComponentNode: SKShapeNode {
         fillColor = .systemBlue
         
         removeAction(forKey: ActionKey.unselect.rawValue)
-        run(.scale(by: 2 * maxRadius / frame.width, duration: 0.2), withKey: ActionKey.select.rawValue)
+        run(.scale(by: maxWidth / frame.width, duration: 0.2), withKey: ActionKey.select.rawValue)
     }
     
     private func unselect() {
         fillColor = .systemIndigo
         
         removeAction(forKey: ActionKey.select.rawValue)
-        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
+        run(.scale(by: minWidth / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
     }
     
     private func solve() {
         fillColor = .systemGreen
 
         removeAction(forKey: ActionKey.select.rawValue)
-        run(.scale(by: 2 * minRadius / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
+        run(.scale(by: minWidth / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
     }
 }

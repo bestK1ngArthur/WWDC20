@@ -93,7 +93,7 @@ class GameScene: SKScene {
                 let x = startX + CGFloat(column) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
                 let y = startY + CGFloat(row) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
                 
-                let node = ComponentNode.create(radius: configuration.componentRadius)
+                let node = ComponentNode.create(with: 2 * configuration.componentRadius)
                 node.position = .init(x: x, y: y)
                 addChild(node)
                 
