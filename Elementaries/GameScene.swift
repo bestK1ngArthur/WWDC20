@@ -9,9 +9,21 @@
 import SpriteKit
 
 class GameScene: SKScene {
+        
+    let configuration: GameConfiguration
+    let master: GameMaster
     
-    let configuration: GameConfiguration = .default
-    let master: GameMaster = .init()
+    init(configuration: GameConfiguration, substances: [Substance]) {
+        self.configuration = configuration
+        self.master = .init(field: configuration.field, substances: substances)
+        
+        super.init(size: .init(width: 750, height: 1334))
+        anchorPoint = .init(x: 0.5, y: 0.5)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func didMove(to view: SKView) {
         drawComponents()
@@ -60,7 +72,7 @@ class GameScene: SKScene {
     private func finishTouch() {
         let textComponents = selectedComponents.compactMap { $0.text }
         
-        if master.checkComponents(textComponents) {
+        if master.check(components: textComponents) != nil {
             selectedComponents.forEach { solveComponent($0) }
         } else {
             components.forEach { row in

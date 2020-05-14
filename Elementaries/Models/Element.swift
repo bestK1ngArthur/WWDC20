@@ -11,4 +11,9 @@ import Foundation
 struct Element {
     let name: String
     let index: Int?
+    
+    init(name: String, index: Int? = nil) {
+        self.name = name
+        self.index = index
+    }
 }

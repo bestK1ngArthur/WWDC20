@@ -9,18 +9,12 @@
 import UIKit
 
 struct GameConfiguration {
-    struct Field {
-        let rows: Int
-        let columns: Int
-    }
-    
-    let field: Field
-    
+    let field: GameField
     let componentRadius: CGFloat
     let componentDistance: CGFloat
     
     static let `default`: GameConfiguration = .init(
-        field: .init(rows: 4, columns: 4),
+        field: (4, 4),
         componentRadius: 50,
         componentDistance: 30
     )

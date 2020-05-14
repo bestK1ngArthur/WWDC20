@@ -17,17 +17,36 @@ class GameViewController: UIViewController {
         
         if let view = self.view as! SKView? {
             
-            // Load the SKScene from 'GameScene.sks'
-            guard let scene = SKScene(fileNamed: "GameScene") as? GameScene else {
-                return
-            }
+            let scene = GameScene(
+                configuration: .default,
+                substances: [
+                    .init(name: "Water", elements: [
+                        .init(name: "H", index: 2),
+                        .init(name: "O")
+                    ]),
+                    .init(name: "?", elements: [
+                        .init(name: "H", index: 2),
+                        .init(name: "S"),
+                        .init(name: "O", index: 4)
+                    ]),
+                    .init(name: "?", elements: [
+                        .init(name: "Na"),
+                        .init(name: "O"),
+                        .init(name: "H")
+                    ]),
+                    .init(name: "?", elements: [
+                        .init(name: "K", index: 2),
+                        .init(name: "S"),
+                        .init(name: "O", index: 4)
+                    ])
+                ]
+            )
             
             // Set the scale mode to scale to fit the window
             scene.scaleMode = .aspectFill
-            
+                        
             // Present the scene
             view.presentScene(scene)
-            
             view.ignoresSiblingOrder = true
             
             view.showsFPS = true
