@@ -46,11 +46,6 @@ class GameMaster {
         
         // TODO: Make alghorhytm
         
-        // H20
-        // H2SO4
-        // NaOH
-        // K2SO4
-        
         matrix = [
             ["H", "2", "Na", "O"],
             ["H", "O", "K", "H"],

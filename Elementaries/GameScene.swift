@@ -28,6 +28,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         drawComponents()
         drawComponentsTitles()
+        drawResultTitle()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -48,6 +49,8 @@ class GameScene: SKScene {
     
     private var components: [[ComponentNode]] = []
     private var selectedComponents: [ComponentNode] = []
+    
+    private let resultLabel: SKLabelNode = .init()
     
     private func handleTouch(_ touch: UITouch) {
         guard let component = atPoint(touch.location(in: self)) as? ComponentNode else { return }
@@ -82,17 +85,20 @@ class GameScene: SKScene {
                 }
             }
         }
+        
+        resultLabel.text = nil
     }
     
     private func drawComponents() {
         
-        let componentDiameter = 2 * configuration.componentRadius
+        let width = configuration.componentWidth
+        let distance = configuration.componentDistance
         
         let rows = configuration.field.rows
         let columns = configuration.field.columns
         
-        let fieldWidth = CGFloat(columns) * componentDiameter + CGFloat(columns - 1) * configuration.componentDistance
-        let fieldHeight = CGFloat(rows) * componentDiameter + CGFloat(rows - 1) * configuration.componentDistance
+        let fieldWidth = CGFloat(columns) * width + CGFloat(columns - 1) * distance
+        let fieldHeight = CGFloat(rows) * width + CGFloat(rows - 1) * distance
         
         let startX = -fieldWidth / 2
         let startY = -fieldHeight / 2
@@ -102,13 +108,13 @@ class GameScene: SKScene {
             var componentsRow: [ComponentNode] = []
             
             for column in 0..<columns {
-                let x = startX + CGFloat(column) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
-                let y = startY + CGFloat(row) * (componentDiameter + configuration.componentDistance) + configuration.componentRadius
+                let x = startX + CGFloat(column) * (width + distance) + width / 2
+                let y = startY + CGFloat(row) * (width + distance) + width / 2
                 
-                let node = ComponentNode.create(with: 2 * configuration.componentRadius)
+                let node = ComponentNode.create(with: width)
                 node.position = .init(x: x, y: y)
-                addChild(node)
                 
+                addChild(node)
                 componentsRow.append(node)
             }
             
@@ -134,6 +140,26 @@ class GameScene: SKScene {
         }
     }
     
+    private func drawResultTitle() {
+        let topComponentNode = children
+            .filter { $0 is ComponentNode }
+            .max { $0.position.y < $1.position.y }
+        
+        guard let topNode = topComponentNode else { return }
+
+        let font = UIFont.systemFont(ofSize: 64, weight: .medium)
+        
+        resultLabel.horizontalAlignmentMode = .center
+        resultLabel.fontSize = font.pointSize
+        resultLabel.fontName = font.fontName
+        resultLabel.position = .init(
+            x: 0,
+            y: topNode.position.y + topNode.frame.height / 2 + 2 * configuration.componentDistance
+        )
+                
+        addChild(resultLabel)
+    }
+    
     private func checkNeighborComponents(first: ComponentNode, second: ComponentNode) -> Bool {
         guard let firstRow = components.firstIndex(where: { $0.contains(first) }),
               let firstColumn = components[firstRow].firstIndex(where: { $0 == first }),
@@ -151,6 +177,12 @@ class GameScene: SKScene {
         
         selectedComponents.append(component)
         component.state = .selected
+        
+        if let resultText = resultLabel.text, let componentText = component.text {
+            resultLabel.text = resultText + componentText
+        } else if let componentText = component.text {
+            resultLabel.text = componentText
+        }
     }
     
     private func unselectComponent(_ component: ComponentNode) {
@@ -158,6 +190,11 @@ class GameScene: SKScene {
         
         selectedComponents.remove(at: index)
         component.state = .unselected
+        
+        if var resultText = resultLabel.text, let componentText = component.text, resultText.hasSuffix(componentText) {
+            resultText.removeLast(componentText.count)
+            resultLabel.text = resultText
+        }
     }
     
     private func solveComponent(_ component: ComponentNode) {
