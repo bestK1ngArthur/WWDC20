@@ -36,6 +36,11 @@ extension AttributedString {
     static func += (left: inout AttributedString, right: AttributedString) {
         left = left + right
     }
+    
+    func addColor(_ color: UIColor) {
+        let scriptTextAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: color]
+        addAttributes(scriptTextAttributes, range: NSRange(location: 0, length: length))
+    }
 }
  
 // MARK: Superscript & subscript

@@ -17,45 +17,47 @@ class GameViewController: UIViewController {
         
         if let view = self.view as! SKView? {
             
-            let substances: [Substance] = [
-                .init(name: "Water", description: "?", elements: [
-                    .init(name: "H", index: 2),
-                    .init(name: "O")
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "H", index: 2),
-                    .init(name: "S"),
-                    .init(name: "O", index: 4)
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "Na"),
-                    .init(name: "O"),
-                    .init(name: "H")
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "K", index: 2),
-                    .init(name: "S"),
-                    .init(name: "O", index: 4)
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "H", index: 2),
-                    .init(name: "S"),
-                    .init(name: "O", index: 3)
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "Li"),
-                    .init(name: "O"),
-                    .init(name: "H")
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "S"),
-                    .init(name: "O", index: 2),
-                ]),
-                .init(name: "?", description: "?", elements: [
-                    .init(name: "S"),
-                    .init(name: "O", index: 3),
-                ])
-            ]
+//            let substances: [Substance] = [
+//                .init(name: "Water", description: "?", elements: [
+//                    .init(name: "H", index: 2),
+//                    .init(name: "O")
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "H", index: 2),
+//                    .init(name: "S"),
+//                    .init(name: "O", index: 4)
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "Na"),
+//                    .init(name: "O"),
+//                    .init(name: "H")
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "K", index: 2),
+//                    .init(name: "S"),
+//                    .init(name: "O", index: 4)
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "H", index: 2),
+//                    .init(name: "S"),
+//                    .init(name: "O", index: 3)
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "Li"),
+//                    .init(name: "O"),
+//                    .init(name: "H")
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "S"),
+//                    .init(name: "O", index: 2),
+//                ]),
+//                .init(name: "?", description: "?", elements: [
+//                    .init(name: "S"),
+//                    .init(name: "O", index: 3),
+//                ])
+//            ]
+            
+            let substances = Substance.substances(from: "substances")
             
             let field: GameField = (4, 4)
             

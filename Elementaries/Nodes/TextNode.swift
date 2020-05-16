@@ -34,4 +34,12 @@ class TextNode: SKLabelNode {
         let action = SKAction.sequence([scaleUpAction, scaleDownAction])
         run(action)
     }
+    
+    func smallScaleUp() {
+        let scaleUpAction = SKAction.scale(to: 1.05, duration: 0.3)
+        let scaleDownAction = SKAction.scale(to: 1, duration: 0.3)
+        
+        let action = SKAction.sequence([scaleUpAction, scaleDownAction])
+        run(action)
+    }
 }

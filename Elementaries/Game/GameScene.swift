@@ -117,14 +117,27 @@ class GameScene: SKScene {
         case .correct(let substance):
             selectedComponents.forEach { solveComponent($0) }
             
-            let text = substance.name
-            showHelpTitle(text)
+            let name: AttributedString = .attributedString(
+                string: "\(substance.name)",
+                font: .helveticaNeue(weight: .semibold, size: helpLabel.textFont.pointSize)
+            )
+            
+            let description: AttributedString = .attributedString(
+                string: "\n\n\(substance.description)",
+                font: helpLabel.textFont.withSize(30)
+            )
+            showHelpTitle(name + description)
         case .incorrect:
             unselectComponents()
             clearResultTitle()
         case .unspecified:
             unselectComponents()
-            showHelpTitle("This substance does exist, but we didn’t guess it")
+            
+            let text: AttributedString = .attributedString(
+                string: "This substance does exist, but we didn’t guess it",
+                font: helpLabel.textFont
+            )
+            showHelpTitle(text)
         }
     }
     
@@ -282,8 +295,9 @@ class GameScene: SKScene {
         resultLabel.attributedText = nil
     }
     
-    private func showHelpTitle(_ text: String) {
-        helpLabel.text = text
+    private func showHelpTitle(_ text: AttributedString) {
+        text.addColor(.white)
+        helpLabel.attributedText = text
         
         let bottomComponentNode = children
             .filter { $0 is ComponentNode }
@@ -294,11 +308,11 @@ class GameScene: SKScene {
 
         let y = bottomNode.position.y - (bottomNode.frame.height / 2 + 2 * configuration.componentDistance + helpLabel.frame.height)
         helpLabel.position = .init(x: 0, y: y)
-        helpLabel.scaleUp()
+        helpLabel.smallScaleUp()
     }
     
     private func clearHelpTitle() {
-        helpLabel.text = nil
+        helpLabel.attributedText = nil
     }
     
     // MARK: Helpers
