@@ -9,43 +9,53 @@
 import Foundation
 
 typealias GameField = (rows: Int, columns: Int)
+typealias GameAnswer = (components: [Substance.Component], chain: GameMatrixGroup)
 
-typealias GameMatrix = [[Substance.Component]]
-typealias GameMatrixIndex = (row: Int, column: Int)
-typealias GameMatrixGroup = [GameMatrixIndex]
-
-protocol GameFieldFormer {
-    func findChain(for componentsMatrix: GameMatrix, componentsCount: Int) -> GameMatrixGroup?
+enum GameAnswerResult {
+    case correct(Substance)
+    case incorrect
+    case unspecified
 }
 
 class GameMaster {
-
     private(set) var matrix: GameMatrix = []
     
     private let field: GameField
     private let fieldFormer: GameFieldFormer
-    
     private let substances: [Substance]
+    
+    private var answers: [GameAnswer] = []
     
     init(field: GameField, fieldFormer: GameFieldFormer, substances: [Substance]) {
         self.field = field
         self.fieldFormer = fieldFormer
         self.substances = substances
         
-        generateMatrix()
+        formMatrix()
     }
         
-    func check(components: [String]) -> Substance? {
-        guard let substance = substances.first(where: { substance in
-            components == substance.components
-        }) else {
-            return nil
+    func check(answer: GameAnswer) -> GameAnswerResult {
+        let answerIsCorrect = answers.contains { currentAnswer in
+            groupsIsEqual(first: currentAnswer.chain, second: answer.chain) &&
+            (currentAnswer.components == answer.components)
         }
         
-        return substance
+        let substance = substances.first(where: { substance in
+            answer.components == substance.components
+        })
+        
+        if let substance = substance {
+            if answerIsCorrect {
+                return .correct(substance)
+            } else {
+                return .unspecified
+            }
+        }
+        
+        return .incorrect
     }
     
-    private func generateMatrix() {
+    private func formMatrix() {
         let totalComponentsCount = substances.reduce(0) { result, substance in
             result + substance.components.count
         }
@@ -86,9 +96,28 @@ class GameMaster {
                 matrix[matrixIndex.row][matrixIndex.column] = component
             }
             
+            answers.append((components, chain))
+            
             printMatrix()
             print("")
         }
+    }
+    
+    private func groupsIsEqual(first: GameMatrixGroup, second: GameMatrixGroup) -> Bool {
+        guard first.count == second.count else { return false }
+        
+        var isEqual = true
+        for (index, firstIndex) in first.enumerated() {
+            let secondIndex = second[index]
+            
+            let isCurrentEqual =
+                (firstIndex.row == secondIndex.row) &&
+                (firstIndex.column == secondIndex.column)
+            
+            isEqual = isEqual || isCurrentEqual
+        }
+    
+        return isEqual
     }
     
     private func printMatrix() {
@@ -102,31 +131,5 @@ class GameMaster {
 
             print("[\(rowText)]")
         }
-    }
-}
-
-extension GameMatrixGroup {
-    
-    func contains(_ index: GameMatrixIndex) -> Bool {
-        contains { currentIndex in
-            (currentIndex.row == index.row) &&
-            (currentIndex.column == index.column)
-        }
-    }
-}
-
-extension GameMatrix {
-        
-    subscript(index: GameMatrixIndex) -> Substance.Component? {
-        guard contains(index) else { return nil }
-        
-        return self[index.row][index.column]
-    }
-    
-    func contains(_ index: GameMatrixIndex) -> Bool {
-        guard 0..<count ~= index.row else { return false }
-        guard 0..<self[index.row].count ~= index.column else { return false }
-        
-        return true
     }
 }

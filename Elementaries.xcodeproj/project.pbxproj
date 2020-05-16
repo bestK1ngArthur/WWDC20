@@ -13,6 +13,7 @@
 		A5026A12246FE2F9005E17E3 /* String+Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A11246FE2F9005E17E3 /* String+Number.swift */; };
 		A5026A14246FEBE7005E17E3 /* AttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A13246FEBE7005E17E3 /* AttributedString.swift */; };
 		A5026A1624703F6A005E17E3 /* StandartGameFieldFormer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A1524703F6A005E17E3 /* StandartGameFieldFormer.swift */; };
+		A5026A182470469E005E17E3 /* GameFieldFormer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A172470469E005E17E3 /* GameFieldFormer.swift */; };
 		A50B634F246823B5006B8961 /* GameMaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50B634E246823B5006B8961 /* GameMaster.swift */; };
 		A50B6351246823FE006B8961 /* GameConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50B6350246823FE006B8961 /* GameConfiguration.swift */; };
 		A5223AF72466A38000C70AB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5223AF62466A38000C70AB5 /* AppDelegate.swift */; };
@@ -34,6 +35,7 @@
 		A5026A11246FE2F9005E17E3 /* String+Number.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Number.swift"; sourceTree = "<group>"; };
 		A5026A13246FEBE7005E17E3 /* AttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedString.swift; sourceTree = "<group>"; };
 		A5026A1524703F6A005E17E3 /* StandartGameFieldFormer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandartGameFieldFormer.swift; sourceTree = "<group>"; };
+		A5026A172470469E005E17E3 /* GameFieldFormer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFieldFormer.swift; sourceTree = "<group>"; };
 		A50B634E246823B5006B8961 /* GameMaster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMaster.swift; sourceTree = "<group>"; };
 		A50B6350246823FE006B8961 /* GameConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConfiguration.swift; sourceTree = "<group>"; };
 		A5223AF32466A38000C70AB5 /* Elementaries.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Elementaries.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,9 +95,10 @@
 				A55885AD2467DEE700C8FE85 /* Scenes */,
 				A5223AF62466A38000C70AB5 /* AppDelegate.swift */,
 				A5026A0C246FD401005E17E3 /* Nodes */,
-				A50B634E246823B5006B8961 /* GameMaster.swift */,
 				A50B6350246823FE006B8961 /* GameConfiguration.swift */,
+				A50B634E246823B5006B8961 /* GameMaster.swift */,
 				A5223AFC2466A38000C70AB5 /* GameScene.swift */,
+				A5026A172470469E005E17E3 /* GameFieldFormer.swift */,
 				A5026A1524703F6A005E17E3 /* StandartGameFieldFormer.swift */,
 				A5223AFE2466A38000C70AB5 /* GameViewController.swift */,
 				A5026A0D246FD546005E17E3 /* UIFont+Custom.swift */,
@@ -208,6 +211,7 @@
 				A5026A12246FE2F9005E17E3 /* String+Number.swift in Sources */,
 				A5026A10246FD76A005E17E3 /* UIColor+Hex.swift in Sources */,
 				A50B6351246823FE006B8961 /* GameConfiguration.swift in Sources */,
+				A5026A182470469E005E17E3 /* GameFieldFormer.swift in Sources */,
 				A5223AFD2466A38000C70AB5 /* GameScene.swift in Sources */,
 				A5223AFF2466A38000C70AB5 /* GameViewController.swift in Sources */,
 				A5026A0B246FD3FA005E17E3 /* TitleNode.swift in Sources */,

@@ -35,7 +35,7 @@ class ComponentNode: SKShapeNode {
         }
     }
         
-    static func create(with width: CGFloat) -> ComponentNode {
+    static func create(width: CGFloat, position: CGPoint, index: GameMatrixIndex) -> ComponentNode {
         
         let node = ComponentNode(
             rect: .init(origin: .init(x: -width / 2, y: -width / 2),
@@ -50,9 +50,11 @@ class ComponentNode: SKShapeNode {
         node.fillColor = node.unselectedFillColor
         node.strokeColor = node.unselectedStrokeColor
 
+        node.position = position
         node.minWidth = node.frame.width
         node.maxWidth = 1.1 * node.frame.width
-                
+        node.index = index
+
         return node
     }
     
@@ -60,7 +62,9 @@ class ComponentNode: SKShapeNode {
         case select
         case unselect
     }
-        
+    
+    private(set) var index: GameMatrixIndex!
+    
     private let unselectedFillColor: SKColor = .gameBlue
     private let unselectedStrokeColor: SKColor = .gameBlueLight
     
@@ -69,7 +73,7 @@ class ComponentNode: SKShapeNode {
 
     private let solvedFillColor: SKColor = .gameGreen
     private let solvedStrokeColor: SKColor = .gameGreenLight
-    
+        
     private var minWidth: CGFloat!
     private var maxWidth: CGFloat!
     

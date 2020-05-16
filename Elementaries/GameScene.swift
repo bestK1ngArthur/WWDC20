@@ -52,6 +52,8 @@ class GameScene: SKScene {
     
     private let resultLabel: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 58))
     
+    // MARK: Touches
+    
     private func handleTouch(_ touch: UITouch) {
         guard let component = atPoint(touch.location(in: self)) as? ComponentNode else { return }
         
@@ -73,12 +75,30 @@ class GameScene: SKScene {
     }
     
     private func finishTouch() {
-        let textComponents = selectedComponents.compactMap { $0.text }
+        let components = selectedComponents.compactMap { $0.text }
+        let chain: GameMatrixGroup = selectedComponents.compactMap { node in
+            guard let rowIndex = self.components.firstIndex(where: { row in
+                row.contains { $0.index == node.index }
+            }) else {
+                return nil
+            }
+            
+            guard let columnIndex = self.components[rowIndex].firstIndex(where: {
+                $0.index == node.index
+            }) else {
+                return nil
+            }
+            
+            return (rowIndex, columnIndex)
+        }
         
-        if master.check(components: textComponents) != nil {
+        let result = master.check(answer: (components, chain))
+        
+        switch result {
+        case .correct(_):
             selectedComponents.forEach { solveComponent($0) }
-        } else {
-            components.forEach { row in
+        case .incorrect, .unspecified:
+            self.components.forEach { row in
                 row.forEach { component in
                     guard component.state == .selected else { return }
                     unselectComponent(component)
@@ -88,6 +108,8 @@ class GameScene: SKScene {
         
         resultLabel.attributedText = nil
     }
+    
+    // MARK: Drawing
     
     private func drawComponents() {
         
@@ -108,11 +130,16 @@ class GameScene: SKScene {
             var componentsRow: [ComponentNode] = []
             
             for column in 0..<columns {
+                let index: GameMatrixIndex = (rows - (1 + row), column)
+                                
                 let x = startX + CGFloat(column) * (width + distance) + width / 2
                 let y = startY + CGFloat(row) * (width + distance) + width / 2
                 
-                let node = ComponentNode.create(with: width)
-                node.position = .init(x: x, y: y)
+                let node = ComponentNode.create(
+                    width: width,
+                    position: .init(x: x, y: y),
+                    index: index
+                )
                 
                 addChild(node)
                 componentsRow.append(node)
@@ -155,17 +182,7 @@ class GameScene: SKScene {
         addChild(resultLabel)
     }
     
-    private func isNeighbors(first: ComponentNode, second: ComponentNode) -> Bool {
-        guard let firstRow = components.firstIndex(where: { $0.contains(first) }),
-              let firstColumn = components[firstRow].firstIndex(where: { $0 == first }),
-              let secondRow = components.firstIndex(where: { $0.contains(second) }),
-              let secondColumn = components[secondRow].firstIndex(where: { $0 == second }) else {
-            return false
-        }
-        
-        let distance = abs(secondRow - firstRow) + abs(secondColumn - firstColumn)
-        return distance == 1
-    }
+    // MARK: Actions
     
     private func selectComponent(_ component: ComponentNode) {
         guard !selectedComponents.contains(component) else { return }
@@ -217,5 +234,19 @@ class GameScene: SKScene {
         }
         
         resultLabel.attributedText = title
+    }
+    
+    // MARK: Helpers
+    
+    private func isNeighbors(first: ComponentNode, second: ComponentNode) -> Bool {
+        guard let firstRow = components.firstIndex(where: { $0.contains(first) }),
+              let firstColumn = components[firstRow].firstIndex(where: { $0 == first }),
+              let secondRow = components.firstIndex(where: { $0.contains(second) }),
+              let secondColumn = components[secondRow].firstIndex(where: { $0 == second }) else {
+            return false
+        }
+        
+        let distance = abs(secondRow - firstRow) + abs(secondColumn - firstColumn)
+        return distance == 1
     }
 }
