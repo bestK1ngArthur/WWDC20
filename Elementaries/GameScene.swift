@@ -186,7 +186,8 @@ class GameScene: SKScene {
     private func drawResultLabel() {
         let topComponentNode = children
             .filter { $0 is ComponentNode }
-            .max { $0.position.y < $1.position.y }
+            .sorted { $0.position.y > $1.position.y }
+            .first
         
         guard let topNode = topComponentNode else { return }
 
@@ -201,15 +202,17 @@ class GameScene: SKScene {
     private func drawHelpLabel() {
         let bottomComponentNode = children
             .filter { $0 is ComponentNode }
-            .max { $0.position.y > $1.position.y }
+            .sorted { $0.position.y < $1.position.y }
+            .first
         
         guard let bottomNode = bottomComponentNode else { return }
 
-        helpLabel.position = .init(
-            x: 0,
-            y: bottomNode.position.y - bottomNode.frame.height / 2 + 2 * configuration.componentDistance
-        )
-                
+        let y = bottomNode.position.y - (bottomNode.frame.height / 2 + 2 * configuration.componentDistance + helpLabel.frame.height)
+        helpLabel.position = .init(x: 0, y: y)
+    
+        helpLabel.numberOfLines = 0
+        helpLabel.preferredMaxLayoutWidth = frame.width - 2 * configuration.componentWidth
+        
         addChild(helpLabel)
     }
     
@@ -246,8 +249,9 @@ class GameScene: SKScene {
     private func updateResultTitle() {
         let components = selectedComponents.compactMap { $0.text }
         
-        var title: AttributedString = .init()
-        components.forEach { component in
+        var title: AttributedString = .init(string: " ")
+        
+        for component in components where !component.isEmpty {
             var componentText: AttributedString {
                 if component.isNumber {
                     return .subscriptString(
@@ -267,11 +271,21 @@ class GameScene: SKScene {
             title += componentText
         }
         
-        resultLabel.attributedText = title
+        resultLabel.attributedText = title + .init(string: " ")
     }
     
     private func showHelpTitle() {
         helpLabel.text = "This substance does exist, but we didn’t guess it"
+        
+        let bottomComponentNode = children
+            .filter { $0 is ComponentNode }
+            .sorted { $0.position.y < $1.position.y }
+            .first
+        
+        guard let bottomNode = bottomComponentNode else { return }
+
+        let y = bottomNode.position.y - (bottomNode.frame.height / 2 + 2 * configuration.componentDistance + helpLabel.frame.height)
+        helpLabel.position = .init(x: 0, y: y)
     }
     
     private func clearHelpTitle() {
