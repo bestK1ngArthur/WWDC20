@@ -86,7 +86,7 @@ class GameScene: SKScene {
             }
         }
         
-        resultLabel.text = nil
+        resultLabel.attributedText = nil
     }
     
     private func drawComponents() {
@@ -172,12 +172,8 @@ class GameScene: SKScene {
         
         selectedComponents.append(component)
         component.state = .selected
-        
-        if let resultText = resultLabel.text, let componentText = component.text {
-            resultLabel.text = resultText + componentText
-        } else if let componentText = component.text {
-            resultLabel.text = componentText
-        }
+
+        updateResultTitle()
     }
     
     private func unselectComponent(_ component: ComponentNode) {
@@ -186,10 +182,7 @@ class GameScene: SKScene {
         selectedComponents.remove(at: index)
         component.state = .unselected
         
-        if var resultText = resultLabel.text, let componentText = component.text, resultText.hasSuffix(componentText) {
-            resultText.removeLast(componentText.count)
-            resultLabel.text = resultText
-        }
+        updateResultTitle()
     }
     
     private func solveComponent(_ component: ComponentNode) {
@@ -197,5 +190,32 @@ class GameScene: SKScene {
         
         selectedComponents.remove(at: index)
         component.state = .solved
+    }
+    
+    private func updateResultTitle() {
+        let components = selectedComponents.compactMap { $0.text }
+        
+        var title: AttributedString = .init()
+        components.forEach { component in
+            var componentText: AttributedString {
+                if component.isNumber {
+                    return .subscriptString(
+                        string: component,
+                        font: resultLabel.textFont.withSize(resultLabel.textFont.pointSize / 2),
+                        color: resultLabel.fontColor
+                    )
+                } else {
+                    return .attributedString(
+                        string: component,
+                        font: resultLabel.textFont,
+                        color: resultLabel.fontColor
+                    )
+                }
+            }
+            
+            title += componentText
+        }
+        
+        resultLabel.attributedText = title
     }
 }

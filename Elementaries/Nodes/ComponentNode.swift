@@ -34,9 +34,9 @@ class ComponentNode: SKShapeNode {
             label.position = .init(x: 0, y: -label.frame.height / 2)
         }
     }
-    
+        
     static func create(with width: CGFloat) -> ComponentNode {
-                
+        
         let node = ComponentNode(
             rect: .init(origin: .init(x: -width / 2, y: -width / 2),
                         size: .init(width: width, height: width)),
@@ -44,11 +44,12 @@ class ComponentNode: SKShapeNode {
         )
         
         node.name = "component_node"
-        node.fillColor = .systemIndigo
-        node.strokeColor = .systemTeal
-        node.lineWidth = width / 8
         node.addChild(node.label)
-        
+
+        node.lineWidth = width / 8
+        node.fillColor = node.unselectedFillColor
+        node.strokeColor = node.unselectedStrokeColor
+
         node.minWidth = node.frame.width
         node.maxWidth = 1.1 * node.frame.width
                 
@@ -60,27 +61,39 @@ class ComponentNode: SKShapeNode {
         case unselect
     }
         
+    private let unselectedFillColor: SKColor = .gameBlue
+    private let unselectedStrokeColor: SKColor = .gameBlueLight
+    
+    private let selectedFillColor: SKColor = .gameRed
+    private let selectedStrokeColor: SKColor = .gameRedLight
+
+    private let solvedFillColor: SKColor = .gameGreen
+    private let solvedStrokeColor: SKColor = .gameGreenLight
+    
     private var minWidth: CGFloat!
     private var maxWidth: CGFloat!
-        
+    
     private let label: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 48))
 
     private func select() {
-        fillColor = .systemBlue
+        fillColor = selectedFillColor
+        strokeColor = selectedStrokeColor
         
         removeAction(forKey: ActionKey.unselect.rawValue)
         run(.scale(by: maxWidth / frame.width, duration: 0.2), withKey: ActionKey.select.rawValue)
     }
     
     private func unselect() {
-        fillColor = .systemIndigo
-        
+        fillColor = unselectedFillColor
+        strokeColor = unselectedStrokeColor
+
         removeAction(forKey: ActionKey.select.rawValue)
         run(.scale(by: minWidth / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)
     }
     
     private func solve() {
-        fillColor = .systemGreen
+        fillColor = solvedFillColor
+        strokeColor = solvedStrokeColor
 
         removeAction(forKey: ActionKey.select.rawValue)
         run(.scale(by: minWidth / frame.width, duration: 0.2), withKey: ActionKey.unselect.rawValue)

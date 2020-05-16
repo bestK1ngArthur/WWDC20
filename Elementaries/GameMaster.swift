@@ -47,8 +47,8 @@ class GameMaster {
         // TODO: Make alghorhytm
         
         matrix = [
-            ["H", "2", "Na", "O"],
-            ["H", "O", "K", "H"],
+            ["H", "2", "H", "O"],
+            ["H", "O", "K", "Na"],
             ["2", "S", "2", "4"],
             ["4", "O", "S", "O"]
         ]
