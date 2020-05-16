@@ -114,14 +114,17 @@ class GameScene: SKScene {
         }
         
         switch result {
-        case .correct(_):
+        case .correct(let substance):
             selectedComponents.forEach { solveComponent($0) }
+            
+            let text = substance.name
+            showHelpTitle(text)
         case .incorrect:
             unselectComponents()
-            resultLabel.attributedText = nil
+            clearResultTitle()
         case .unspecified:
             unselectComponents()
-            showHelpTitle()
+            showHelpTitle("This substance does exist, but we didn’t guess it")
         }
     }
     
@@ -272,10 +275,15 @@ class GameScene: SKScene {
         }
         
         resultLabel.attributedText = title + .init(string: " ")
+        resultLabel.scaleUp()
     }
     
-    private func showHelpTitle() {
-        helpLabel.text = "This substance does exist, but we didn’t guess it"
+    private func clearResultTitle() {
+        resultLabel.attributedText = nil
+    }
+    
+    private func showHelpTitle(_ text: String) {
+        helpLabel.text = text
         
         let bottomComponentNode = children
             .filter { $0 is ComponentNode }
@@ -286,6 +294,7 @@ class GameScene: SKScene {
 
         let y = bottomNode.position.y - (bottomNode.frame.height / 2 + 2 * configuration.componentDistance + helpLabel.frame.height)
         helpLabel.position = .init(x: 0, y: y)
+        helpLabel.scaleUp()
     }
     
     private func clearHelpTitle() {

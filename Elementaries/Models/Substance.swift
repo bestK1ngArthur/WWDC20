@@ -12,6 +12,8 @@ struct Substance {
     typealias Component = String
     
     let name: String
+    let description: String
+
     let elements: [Element]
     
     var components: [Component] {

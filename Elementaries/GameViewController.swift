@@ -18,40 +18,40 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
             
             let substances: [Substance] = [
-                .init(name: "Water", elements: [
+                .init(name: "Water", description: "?", elements: [
                     .init(name: "H", index: 2),
                     .init(name: "O")
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "H", index: 2),
                     .init(name: "S"),
                     .init(name: "O", index: 4)
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "Na"),
                     .init(name: "O"),
                     .init(name: "H")
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "K", index: 2),
                     .init(name: "S"),
                     .init(name: "O", index: 4)
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "H", index: 2),
                     .init(name: "S"),
                     .init(name: "O", index: 3)
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "Li"),
                     .init(name: "O"),
                     .init(name: "H")
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "S"),
                     .init(name: "O", index: 2),
                 ]),
-                .init(name: "?", elements: [
+                .init(name: "?", description: "?", elements: [
                     .init(name: "S"),
                     .init(name: "O", index: 3),
                 ])
