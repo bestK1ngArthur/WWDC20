@@ -14,6 +14,10 @@ typealias GameMatrix = [[Substance.Component]]
 typealias GameMatrixIndex = (row: Int, column: Int)
 typealias GameMatrixGroup = [GameMatrixIndex]
 
+protocol GameFieldComposer {
+    
+}
+
 class GameMaster {
 
     private(set) var matrix: GameMatrix = []
@@ -21,6 +25,8 @@ class GameMaster {
     private let field: GameField
     private let substances: [Substance]
     private let minComponentsCount: Int
+    
+    private let attemptsChainCount = 5
     
     init(field: GameField, substances: [Substance]) {
         self.field = field
@@ -111,7 +117,8 @@ class GameMaster {
         
         let filteredGroups = freeMatrixGroups.filter {
             ($0.count == componentsCount) ||
-            ($0.count >= (componentsCount + minComponentsCount))
+            ($0.count >= (componentsCount + minComponentsCount)) ||
+            getTails(for: $0).count <= 2
         }
   
         guard
@@ -119,29 +126,73 @@ class GameMaster {
             let startIndex = getCorners(for: selectedGroup).randomElement() else {
             return nil
         }
-        
-        var chain: GameMatrixGroup = [startIndex]
-        
-        for _ in 0..<(componentsCount - 1) {
-            guard let index = chain.last else { return nil }
-            
-            let neighbors = selectedGroup.filter { isNeighbors(first: index, second: $0) }
-            
-            func getNextIndex() -> GameMatrixIndex? {
-                guard let nextIndex = neighbors.randomElement() else { return nil }
                 
-                if chain.contains(nextIndex) {
-                    return getNextIndex()
-                } else {
-                    return nextIndex
+        func findPossibleChain(startIndex: GameMatrixIndex, group: GameMatrixGroup, count: Int) -> GameMatrixGroup? {
+            var chain: GameMatrixGroup = [startIndex]
+            
+            for _ in 0..<(count - 1) {
+                guard let index = chain.last else { return nil }
+                
+                var neighbors = selectedGroup.filter { isNeighbors(first: index, second: $0) }
+                
+                func getNextIndex() -> GameMatrixIndex? {
+                    guard let nextIndex = neighbors.randomElement() else { return nil }
+                    
+                    if chain.contains(nextIndex) {
+                        neighbors.removeAll {
+                            ($0.row == nextIndex.row) &&
+                            ($0.column == nextIndex.column)
+                        }
+                        
+                        return getNextIndex()
+                    } else {
+                        return nextIndex
+                    }
                 }
+                
+                guard let nextIndex = getNextIndex() else { return nil }
+                chain.append(nextIndex)
             }
             
-            guard let nextIndex = getNextIndex() else { return nil }
-            chain.append(nextIndex)
+            return chain
         }
         
-        return chain
+        var attemptsCount = attemptsChainCount
+
+        while attemptsCount > 0 {
+            attemptsCount -= 1
+            
+            guard let chain = findPossibleChain(
+                startIndex: startIndex,
+                group: selectedGroup,
+                count: componentsCount
+            ) else {
+                continue
+            }
+            
+            // Check chain
+            
+            for index in chain {
+                matrix[index.row][index.column] = "X"
+            }
+            
+            printMatrix()
+            
+            let hasShortGroups = freeMatrixGroups.contains { $0.count < minComponentsCount }
+            let hasDeadGroups = freeMatrixGroups.contains { getTails(for: $0).count > 2 }
+            
+            for index in chain {
+                matrix[index.row][index.column] = ""
+            }
+            
+            if hasShortGroups || hasDeadGroups {
+                continue
+            } else {
+                return chain
+            }
+        }
+        
+        return nil
     }
     
     private var freeMatrixGroups: [GameMatrixGroup] {
@@ -165,9 +216,13 @@ class GameMaster {
         var groupsText = groups.reduce("") { result, group in
             result + "\(group.count) | "
         }
-        groupsText.removeLast()
-        groupsText.removeLast()
-        groupsText.removeLast()
+        
+        if !groupsText.isEmpty {
+            groupsText.removeLast()
+            groupsText.removeLast()
+            groupsText.removeLast()
+        }
+
         print("Groups: \(groups.count) (\(groupsText))")
         
         return groups
@@ -230,6 +285,25 @@ class GameMaster {
             .filter { $0.1 == minNeighborsCount }
             .map { $0.0 }
         
+        return corners
+    }
+    
+    private func getTails(for group: GameMatrixGroup) -> GameMatrixGroup {
+        var corners: GameMatrixGroup = []
+        
+        for index in group {
+            var neighborsCount = 0
+            
+            for currentIndex in group {
+                guard isNeighbors(first: index, second: currentIndex) else { continue }
+                neighborsCount += 1
+            }
+            
+            if neighborsCount == 1 {
+                corners.append(index)
+            }
+        }
+
         return corners
     }
 }
