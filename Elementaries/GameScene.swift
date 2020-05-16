@@ -9,7 +9,7 @@
 import SpriteKit
 
 class GameScene: SKScene {
-        
+    
     let configuration: GameConfiguration
     let master: GameMaster
     
@@ -50,7 +50,7 @@ class GameScene: SKScene {
     private var components: [[ComponentNode]] = []
     private var selectedComponents: [ComponentNode] = []
     
-    private let resultLabel: SKLabelNode = .init()
+    private let resultLabel: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 58))
     
     private func handleTouch(_ touch: UITouch) {
         guard let component = atPoint(touch.location(in: self)) as? ComponentNode else { return }
@@ -147,11 +147,6 @@ class GameScene: SKScene {
         
         guard let topNode = topComponentNode else { return }
 
-        let font = UIFont.systemFont(ofSize: 64, weight: .medium)
-        
-        resultLabel.horizontalAlignmentMode = .center
-        resultLabel.fontSize = font.pointSize
-        resultLabel.fontName = font.fontName
         resultLabel.position = .init(
             x: 0,
             y: topNode.position.y + topNode.frame.height / 2 + 2 * configuration.componentDistance

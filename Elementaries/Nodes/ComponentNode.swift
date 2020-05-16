@@ -29,9 +29,12 @@ class ComponentNode: SKShapeNode {
     
     var text: String? {
         get { label.text }
-        set { label.text = newValue }
+        set {
+            label.text = newValue
+            label.position = .init(x: 0, y: -label.frame.height / 2)
+        }
     }
-        
+    
     static func create(with width: CGFloat) -> ComponentNode {
                 
         let node = ComponentNode(
@@ -43,12 +46,12 @@ class ComponentNode: SKShapeNode {
         node.name = "component_node"
         node.fillColor = .systemIndigo
         node.strokeColor = .systemTeal
-        node.lineWidth = width / 10
+        node.lineWidth = width / 8
         node.addChild(node.label)
         
         node.minWidth = node.frame.width
         node.maxWidth = 1.1 * node.frame.width
-        
+                
         return node
     }
     
@@ -60,7 +63,7 @@ class ComponentNode: SKShapeNode {
     private var minWidth: CGFloat!
     private var maxWidth: CGFloat!
         
-    private let label: SKLabelNode = .init()
+    private let label: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 48))
 
     private func select() {
         fillColor = .systemBlue
