@@ -64,15 +64,15 @@ class GameMaster {
                 
 //        matrix = [
 //            ["", "", "X", ""],
-//            ["", "", "X", ""],
 //            ["", "X", "X", ""],
-//            ["", "X", "", "X"]
+//            ["", "X", "X", "X"],
+//            ["", "X", "X", "X"]
 //        ]
         
         let suffledSubstances = substances.shuffled()
         for substance in suffledSubstances {
             print("Substance: \(substance.components.joined())")
-                        
+            
             guard let chain = findChain(for: substance) else {
                 continue
             }
@@ -207,37 +207,28 @@ class GameMaster {
     }
     
     private func getCorners(for group: GameMatrixGroup) -> GameMatrixGroup {
-        guard
-            let minRow = group.map({ $0.row }).min(),
-            let maxRow = group.map({ $0.row }).max() else {
+        var cornersNeighbors: [(GameMatrixIndex, Int)] = []
+        
+        for index in group {
+            var neighborsCount = 0
+            
+            for currentIndex in group {
+                guard isNeighbors(first: index, second: currentIndex) else { continue }
+                neighborsCount += 1
+            }
+            
+            cornersNeighbors.append((index, neighborsCount))
+        }
+        
+        guard let minNeighborsCount = cornersNeighbors.min(by: { first, second in
+            first.1 < second.1
+        })?.1 else {
             return []
         }
         
-        var corners: [GameMatrixIndex] = []
-        
-        let topRow = group
-            .filter { $0.row == minRow }
-            .sorted { $0.column < $1.column }
-    
-        if let topLeft = topRow.first, !corners.contains(topLeft) {
-            corners.append(topLeft)
-        }
-
-        if let topRight = topRow.last, !corners.contains(topRight) {
-            corners.append(topRight)
-        }
-        
-        let bottomRow =  group
-            .filter { $0.row == maxRow }
-            .sorted { $0.column < $1.column }
-        
-        if let bottomLeft = bottomRow.first, !corners.contains(bottomLeft) {
-            corners.append(bottomLeft)
-        }
-
-        if let bottomRight = bottomRow.last, !corners.contains(bottomRight) {
-            corners.append(bottomRight)
-        }
+        let corners = cornersNeighbors
+            .filter { $0.1 == minNeighborsCount }
+            .map { $0.0 }
         
         return corners
     }
