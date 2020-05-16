@@ -28,7 +28,8 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         drawComponents()
         drawComponentsTitles()
-        drawResultTitle()
+        drawResultLabel()
+        drawHelpLabel()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -51,14 +52,25 @@ class GameScene: SKScene {
     private var selectedComponents: [ComponentNode] = []
     
     private let resultLabel: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 58))
+    private let helpLabel: TextNode = .create(with: .helveticaNeue(size: 40))
     
     // MARK: Touches
     
     private func handleTouch(_ touch: UITouch) {
-        guard let component = atPoint(touch.location(in: self)) as? ComponentNode else { return }
+        var componentNode: ComponentNode? {
+            if let componentNode = atPoint(touch.location(in: self)) as? ComponentNode {
+                return componentNode
+            }
+            
+            if let label = atPoint(touch.location(in: self)) as? TextNode {
+                return label.parent as? ComponentNode
+            }
+            
+            return nil
+        }
         
-        guard component.state != .solved else { return }
-        
+        guard let component = componentNode, component.state != .solved else { return }
+                
         if let index = selectedComponents.lastIndex(of: component) {
             let lastIndex = index + 1
             if lastIndex < selectedComponents.count {
@@ -94,19 +106,23 @@ class GameScene: SKScene {
         
         let result = master.check(answer: (components, chain))
         
-        switch result {
-        case .correct(_):
-            selectedComponents.forEach { solveComponent($0) }
-        case .incorrect, .unspecified:
-            self.components.forEach { row in
-                row.forEach { component in
-                    guard component.state == .selected else { return }
-                    unselectComponent(component)
-                }
+        func unselectComponents() {
+            selectedComponents.forEach { component in
+                guard component.state == .selected else { return }
+                unselectComponent(component)
             }
         }
         
-        resultLabel.attributedText = nil
+        switch result {
+        case .correct(_):
+            selectedComponents.forEach { solveComponent($0) }
+        case .incorrect:
+            unselectComponents()
+            resultLabel.attributedText = nil
+        case .unspecified:
+            unselectComponents()
+            showHelpTitle()
+        }
     }
     
     // MARK: Drawing
@@ -167,7 +183,7 @@ class GameScene: SKScene {
         }
     }
     
-    private func drawResultTitle() {
+    private func drawResultLabel() {
         let topComponentNode = children
             .filter { $0 is ComponentNode }
             .max { $0.position.y < $1.position.y }
@@ -182,6 +198,21 @@ class GameScene: SKScene {
         addChild(resultLabel)
     }
     
+    private func drawHelpLabel() {
+        let bottomComponentNode = children
+            .filter { $0 is ComponentNode }
+            .max { $0.position.y > $1.position.y }
+        
+        guard let bottomNode = bottomComponentNode else { return }
+
+        helpLabel.position = .init(
+            x: 0,
+            y: bottomNode.position.y - bottomNode.frame.height / 2 + 2 * configuration.componentDistance
+        )
+                
+        addChild(helpLabel)
+    }
+    
     // MARK: Actions
     
     private func selectComponent(_ component: ComponentNode) {
@@ -191,6 +222,7 @@ class GameScene: SKScene {
         component.state = .selected
 
         updateResultTitle()
+        clearHelpTitle()
     }
     
     private func unselectComponent(_ component: ComponentNode) {
@@ -208,6 +240,8 @@ class GameScene: SKScene {
         selectedComponents.remove(at: index)
         component.state = .solved
     }
+    
+    // MARK: Labels
     
     private func updateResultTitle() {
         let components = selectedComponents.compactMap { $0.text }
@@ -234,6 +268,14 @@ class GameScene: SKScene {
         }
         
         resultLabel.attributedText = title
+    }
+    
+    private func showHelpTitle() {
+        helpLabel.text = "This substance does exist, but we didn’t guess it"
+    }
+    
+    private func clearHelpTitle() {
+        helpLabel.text = nil
     }
     
     // MARK: Helpers

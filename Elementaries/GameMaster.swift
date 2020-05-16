@@ -114,7 +114,7 @@ class GameMaster {
                 (firstIndex.row == secondIndex.row) &&
                 (firstIndex.column == secondIndex.column)
             
-            isEqual = isEqual || isCurrentEqual
+            isEqual = isEqual && isCurrentEqual
         }
     
         return isEqual

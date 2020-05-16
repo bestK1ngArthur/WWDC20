@@ -7,16 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B365B523-36BF-4C49-BC98-4F61F5336D69"
+            uuid = "BE7B8028-F776-4932-97DC-D6CDE9E7062C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Elementaries/GameScene.swift"
+            filePath = "Elementaries/GameMaster.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
-            landmarkName = "finishTouch()"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "groupsIsEqual(first:second:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0699C500-75DD-451C-AC66-9591B23EB4CC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Elementaries/GameMaster.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "groupsIsEqual(first:second:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

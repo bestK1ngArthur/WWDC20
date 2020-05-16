@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A5026A0B246FD3FA005E17E3 /* TitleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A0A246FD3FA005E17E3 /* TitleNode.swift */; };
+		A5026A0B246FD3FA005E17E3 /* TextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A0A246FD3FA005E17E3 /* TextNode.swift */; };
 		A5026A0E246FD546005E17E3 /* UIFont+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A0D246FD546005E17E3 /* UIFont+Custom.swift */; };
 		A5026A10246FD76A005E17E3 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A0F246FD76A005E17E3 /* UIColor+Hex.swift */; };
 		A5026A12246FE2F9005E17E3 /* String+Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5026A11246FE2F9005E17E3 /* String+Number.swift */; };
@@ -29,7 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A5026A0A246FD3FA005E17E3 /* TitleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleNode.swift; sourceTree = "<group>"; };
+		A5026A0A246FD3FA005E17E3 /* TextNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextNode.swift; sourceTree = "<group>"; };
 		A5026A0D246FD546005E17E3 /* UIFont+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Custom.swift"; sourceTree = "<group>"; };
 		A5026A0F246FD76A005E17E3 /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		A5026A11246FE2F9005E17E3 /* String+Number.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Number.swift"; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				A55885AE2467DF5500C8FE85 /* ComponentNode.swift */,
-				A5026A0A246FD3FA005E17E3 /* TitleNode.swift */,
+				A5026A0A246FD3FA005E17E3 /* TextNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -214,7 +214,7 @@
 				A5026A182470469E005E17E3 /* GameFieldFormer.swift in Sources */,
 				A5223AFD2466A38000C70AB5 /* GameScene.swift in Sources */,
 				A5223AFF2466A38000C70AB5 /* GameViewController.swift in Sources */,
-				A5026A0B246FD3FA005E17E3 /* TitleNode.swift in Sources */,
+				A5026A0B246FD3FA005E17E3 /* TextNode.swift in Sources */,
 				A5223AF72466A38000C70AB5 /* AppDelegate.swift in Sources */,
 				A5026A14246FEBE7005E17E3 /* AttributedString.swift in Sources */,
 			);

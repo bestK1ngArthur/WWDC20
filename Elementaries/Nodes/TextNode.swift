@@ -1,5 +1,5 @@
 //
-//  TitleNode.swift
+//  TextNode.swift
 //  Elementaries
 //
 //  Created by Artem Belkov on 16.05.2020.
@@ -22,6 +22,7 @@ class TextNode: SKLabelNode {
 
         node.textFont = font
         node.horizontalAlignmentMode = .center
+        node.isUserInteractionEnabled = false
         
         return node
     }
