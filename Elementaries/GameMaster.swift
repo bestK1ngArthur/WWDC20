@@ -9,18 +9,25 @@
 import Foundation
 
 typealias GameField = (rows: Int, columns: Int)
+
 typealias GameMatrix = [[Substance.Component]]
+typealias GameMatrixIndex = (row: Int, column: Int)
+typealias GameMatrixGroup = [GameMatrixIndex]
 
 class GameMaster {
 
+    private(set) var matrix: GameMatrix = []
+    
     private let field: GameField
     private let substances: [Substance]
-    
-    var matrix: GameMatrix = []
+    private let minComponentsCount: Int
     
     init(field: GameField, substances: [Substance]) {
         self.field = field
         self.substances = substances
+        self.minComponentsCount = substances.min(by: { first, second in
+            first.components.count < second.components.count
+        })?.components.count ?? 2
         
         generateMatrix()
     }
@@ -43,14 +50,221 @@ class GameMaster {
         guard totalComponentsCount >= field.rows * field.columns else {
             fatalError("Can't generate game matrix. Substance components count is not enough to fill game field")
         }
+                
+        matrix = []
         
-        // TODO: Make alghorhytm
+        // Fill empty values
+        for _ in 0..<field.rows {
+            var row: [Substance.Component] = []
+            for _ in 0..<field.columns {
+                row.append("")
+            }
+            matrix.append(row)
+        }
+                
+//        matrix = [
+//            ["", "", "X", ""],
+//            ["", "", "X", ""],
+//            ["", "X", "X", ""],
+//            ["", "X", "", "X"]
+//        ]
         
-        matrix = [
-            ["H", "2", "H", "O"],
-            ["H", "O", "K", "Na"],
-            ["2", "S", "2", "4"],
-            ["4", "O", "S", "O"]
-        ]
+        let suffledSubstances = substances.shuffled()
+        for substance in suffledSubstances {
+            print("Substance: \(substance.components.joined())")
+                        
+            guard let chain = findChain(for: substance) else {
+                continue
+            }
+            
+            let components = substance.components
+            for (componentIndex, matrixIndex) in chain.enumerated() {
+                let component = components[componentIndex]
+                matrix[matrixIndex.row][matrixIndex.column] = component
+            }
+            
+            printMatrix()
+            print("")
+        }
+    }
+    
+    private func printMatrix() {
+        
+        for row in matrix {
+            var rowText = row.reduce("") { result, component in
+                result + " \(component) |"
+            }
+            
+            rowText.removeLast()
+
+            print("[\(rowText)]")
+        }
+    }
+    
+    private func isNeighbors(first: GameMatrixIndex, second: GameMatrixIndex) -> Bool {
+        let distance = abs(second.row - first.row) + abs(second.column - first.column)
+        return distance == 1
+    }
+    
+    private func findChain(for substance: Substance) -> GameMatrixGroup? {
+        let componentsCount = substance.components.count
+        
+        let filteredGroups = freeMatrixGroups.filter {
+            ($0.count == componentsCount) ||
+            ($0.count >= (componentsCount + minComponentsCount))
+        }
+  
+        guard
+            let selectedGroup = filteredGroups.randomElement(),
+            let startIndex = getCorners(for: selectedGroup).randomElement() else {
+            return nil
+        }
+        
+        var chain: GameMatrixGroup = [startIndex]
+        
+        for _ in 0..<(componentsCount - 1) {
+            guard let index = chain.last else { return nil }
+            
+            let neighbors = selectedGroup.filter { isNeighbors(first: index, second: $0) }
+            
+            func getNextIndex() -> GameMatrixIndex? {
+                guard let nextIndex = neighbors.randomElement() else { return nil }
+                
+                if chain.contains(nextIndex) {
+                    return getNextIndex()
+                } else {
+                    return nextIndex
+                }
+            }
+            
+            guard let nextIndex = getNextIndex() else { return nil }
+            chain.append(nextIndex)
+        }
+        
+        return chain
+    }
+    
+    private var freeMatrixGroups: [GameMatrixGroup] {
+        var groups: [GameMatrixGroup] = []
+                
+        for rowIndex in 0...(matrix.count - 1) {
+            for columnIndex in 0...(matrix[rowIndex].count - 1) {
+                let index: GameMatrixIndex = (rowIndex, columnIndex)
+                                
+                let groupsContains = groups.contains { $0.contains(index) }
+                guard !groupsContains else { continue }
+                
+                guard let freeGroup = findFreeGroup(startIndex: index), !freeGroup.isEmpty else {
+                    continue
+                }
+                
+                groups.append(freeGroup)
+            }
+        }
+        
+        var groupsText = groups.reduce("") { result, group in
+            result + "\(group.count) | "
+        }
+        groupsText.removeLast()
+        groupsText.removeLast()
+        groupsText.removeLast()
+        print("Groups: \(groups.count) (\(groupsText))")
+        
+        return groups
+    }
+    
+    private func findFreeGroup(startIndex: GameMatrixIndex) -> GameMatrixGroup? {
+        guard matrix.contains(startIndex) else { return nil }
+        guard let component = matrix[startIndex], component.isEmpty else { return nil }
+        
+        var group: GameMatrixGroup = []
+        
+        func findFreeNeighbors(for index: GameMatrixIndex) {
+            guard !group.contains(index) else { return }
+            
+            guard let component = matrix[index], component.isEmpty else {
+                return
+            }
+            
+            group.append(index)
+            
+            let leftIndex: GameMatrixIndex = (index.row, index.column - 1)
+            findFreeNeighbors(for: leftIndex)
+            
+            let topIndex: GameMatrixIndex = (index.row - 1, index.column)
+            findFreeNeighbors(for: topIndex)
+
+            let rightIndex: GameMatrixIndex = (index.row, index.column + 1)
+            findFreeNeighbors(for: rightIndex)
+
+            let bottomIndex: GameMatrixIndex = (index.row + 1, index.column)
+            findFreeNeighbors(for: bottomIndex)
+        }
+        
+        findFreeNeighbors(for: startIndex)
+        
+        return group
+    }
+    
+    private func getCorners(for group: GameMatrixGroup) -> GameMatrixGroup {
+        guard
+            let minRow = group.map({ $0.row }).min(),
+            let maxRow = group.map({ $0.row }).max() else {
+            return []
+        }
+        
+        var corners: [GameMatrixIndex] = []
+        
+        let topRow = group
+            .filter { $0.row == minRow }
+            .sorted { $0.column < $1.column }
+    
+        if let topLeft = topRow.first, !corners.contains(topLeft) {
+            corners.append(topLeft)
+        }
+
+        if let topRight = topRow.last, !corners.contains(topRight) {
+            corners.append(topRight)
+        }
+        
+        let bottomRow =  group
+            .filter { $0.row == maxRow }
+            .sorted { $0.column < $1.column }
+        
+        if let bottomLeft = bottomRow.first, !corners.contains(bottomLeft) {
+            corners.append(bottomLeft)
+        }
+
+        if let bottomRight = bottomRow.last, !corners.contains(bottomRight) {
+            corners.append(bottomRight)
+        }
+        
+        return corners
+    }
+}
+
+extension GameMatrixGroup {
+    
+    func contains(_ index: GameMatrixIndex) -> Bool {
+        contains { currentIndex in
+            (currentIndex.row == index.row) &&
+            (currentIndex.column == index.column)
+        }
+    }
+}
+
+extension GameMatrix {
+        
+    subscript(index: GameMatrixIndex) -> Substance.Component? {
+        guard contains(index) else { return nil }
+        
+        return self[index.row][index.column]
+    }
+    
+    func contains(_ index: GameMatrixIndex) -> Bool {
+        guard 0..<count ~= index.row else { return false }
+        guard 0..<self[index.row].count ~= index.column else { return false }
+        
+        return true
     }
 }

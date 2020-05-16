@@ -66,7 +66,7 @@ class GameScene: SKScene {
         } else {
             if selectedComponents.isEmpty {
                 selectComponent(component)
-            } else if let lastComponent = selectedComponents.last, checkNeighborComponents(first: lastComponent, second: component) {
+            } else if let lastComponent = selectedComponents.last, isNeighbors(first: lastComponent, second: component) {
                 selectComponent(component)
             }
         }
@@ -155,7 +155,7 @@ class GameScene: SKScene {
         addChild(resultLabel)
     }
     
-    private func checkNeighborComponents(first: ComponentNode, second: ComponentNode) -> Bool {
+    private func isNeighbors(first: ComponentNode, second: ComponentNode) -> Bool {
         guard let firstRow = components.firstIndex(where: { $0.contains(first) }),
               let firstColumn = components[firstRow].firstIndex(where: { $0 == first }),
               let secondRow = components.firstIndex(where: { $0.contains(second) }),
