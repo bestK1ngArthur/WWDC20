@@ -13,9 +13,9 @@ class GameScene: SKScene {
     let configuration: GameConfiguration
     let master: GameMaster
     
-    init(configuration: GameConfiguration, substances: [Substance]) {
+    init(configuration: GameConfiguration, master: GameMaster) {
         self.configuration = configuration
-        self.master = .init(field: configuration.field, substances: substances)
+        self.master = master
         
         super.init(size: .init(width: 750, height: 1334))
         anchorPoint = .init(x: 0.5, y: 0.5)

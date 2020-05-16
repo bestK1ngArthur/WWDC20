@@ -17,29 +17,70 @@ class GameViewController: UIViewController {
         
         if let view = self.view as! SKView? {
             
+            let substances: [Substance] = [
+                .init(name: "Water", elements: [
+                    .init(name: "H", index: 2),
+                    .init(name: "O")
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "H", index: 2),
+                    .init(name: "S"),
+                    .init(name: "O", index: 4)
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "Na"),
+                    .init(name: "O"),
+                    .init(name: "H")
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "K", index: 2),
+                    .init(name: "S"),
+                    .init(name: "O", index: 4)
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "H", index: 2),
+                    .init(name: "S"),
+                    .init(name: "O", index: 3)
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "Li"),
+                    .init(name: "O"),
+                    .init(name: "H")
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "S"),
+                    .init(name: "O", index: 2),
+                ]),
+                .init(name: "?", elements: [
+                    .init(name: "S"),
+                    .init(name: "O", index: 3),
+                ])
+            ]
+            
+            let field: GameField = (4, 4)
+            
+            let configuration = GameConfiguration(
+                field: field,
+                componentWidth: 100,
+                componentDistance: 30
+            )
+            
+            let fieldFormer = StandartGameFieldFormer(
+                minComponentsCount: substances
+                    .min { $0.components.count < $1.components.count }?
+                    .components.count ?? 2,
+                attemptsChainCount: 5
+            )
+            
+            let master = GameMaster(
+                field: field,
+                fieldFormer: fieldFormer,
+                substances: substances
+            )
+            
             let scene = GameScene(
-                configuration: .default,
-                substances: [
-                    .init(name: "Water", elements: [
-                        .init(name: "H", index: 2),
-                        .init(name: "O")
-                    ]),
-                    .init(name: "?", elements: [
-                        .init(name: "H", index: 2),
-                        .init(name: "S"),
-                        .init(name: "O", index: 4)
-                    ]),
-                    .init(name: "?", elements: [
-                        .init(name: "Na"),
-                        .init(name: "O"),
-                        .init(name: "H")
-                    ]),
-                    .init(name: "?", elements: [
-                        .init(name: "K", index: 2),
-                        .init(name: "S"),
-                        .init(name: "O", index: 4)
-                    ])
-                ]
+                configuration: configuration,
+                master: master
             )
             
             // Set the scale mode to scale to fit the window
