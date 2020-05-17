@@ -77,7 +77,7 @@ public class ComponentNode: SKShapeNode {
     private var minWidth: CGFloat!
     private var maxWidth: CGFloat!
     
-    private let label: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 48))
+    private let label: TextNode = .create(with: .helveticaNeue(weight: .bold, size: 44))
 
     private func select() {
         fillColor = selectedFillColor

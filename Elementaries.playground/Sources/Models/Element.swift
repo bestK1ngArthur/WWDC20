@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Element of substance
 public struct Element {
     let name: String
     let index: Int?

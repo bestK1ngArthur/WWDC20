@@ -133,7 +133,7 @@ public class GameScene: SKScene {
             unselectComponents()
             
             let text: AttributedString = .attributedString(
-                string: "This substance does exist, but we didn’t guess it",
+                string: "This substance does exist, but we didn’t guess it here",
                 font: helpLabel.textFont
             )
             showHelpTitle(text)

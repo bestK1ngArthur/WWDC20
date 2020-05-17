@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Game interface configuration
 public struct GameConfiguration {
     let field: GameField
     let componentWidth: CGFloat
@@ -15,8 +16,8 @@ public struct GameConfiguration {
     
     static let `default`: GameConfiguration = .init(
         field: (4, 4),
-        componentWidth: 100,
-        componentDistance: 30
+        componentWidth: 70,
+        componentDistance: 20
     )
     
     public init(field: GameField, componentWidth: CGFloat, componentDistance: CGFloat) {

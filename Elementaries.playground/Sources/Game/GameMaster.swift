@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Game field configuration
 public typealias GameField = (rows: Int, columns: Int)
 public typealias GameAnswer = (components: [SubstanceComponent], chain: GameMatrixGroup)
 
@@ -17,6 +18,7 @@ public enum GameAnswerResult {
     case unspecified
 }
 
+/// **GameMaster** controls the game process
 public class GameMaster {
     public var matrix: GameMatrix = []
     
@@ -33,7 +35,8 @@ public class GameMaster {
         
         formMatrix()
     }
-        
+    
+    /// Returns answers result
     public func check(answer: GameAnswer) -> GameAnswerResult {
         let answerIsCorrect = answers.contains { currentAnswer in
             groupsIsEqual(first: currentAnswer.chain, second: answer.chain) &&
@@ -75,7 +78,10 @@ public class GameMaster {
             matrix.append(row)
         }
         
+        // Shuffle substances
         let suffledSubstances = substances.shuffled()
+        
+        // Find chains for substances & fill field
         for substance in suffledSubstances {
             guard let chain = fieldFormer.findChain(for: matrix, componentsCount: substance.components.count) else {
                 continue
@@ -87,6 +93,7 @@ public class GameMaster {
                 matrix[matrixIndex.row][matrixIndex.column] = component
             }
             
+            // Save answers to check in future
             answers.append((components, chain))
         }
     }

@@ -10,6 +10,7 @@ import Foundation
 
 public typealias SubstanceComponent = String
 
+/// Chemical substance
 public struct Substance {
     let name: String
     let description: String
@@ -86,44 +87,58 @@ extension Substance: Decodable {
 
 extension Substance {
     
-    public static var acids: [Substance] {
+    /// List of simple substances
+    public static var simpleSubstances: [Substance] {
         return [
-            .init(name: "Water", description: "?", elements: [
+            .init(name: "Water", description: "The amount of fresh water in the world is only about 2 percent", elements: [
                 .init(name: "H", index: 2),
                 .init(name: "O")
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "H", index: 2),
-                .init(name: "S"),
-                .init(name: "O", index: 4)
+            .init(name: "Chlorine", description: "Chlorine is a greenish yellow poisonous gas", elements: [
+                .init(name: "Cl", index: 2)
             ]),
-            .init(name: "?", description: "?", elements: [
+            .init(name: "Bromine", description: "Bromine is the only non-metal that is liquid at room temperature", elements: [
+                .init(name: "Br", index: 2)
+            ]),
+            .init(name: "Sodium chloride", description: "Sodium chloride is a common salt that everyone has in the kitchen", elements: [
                 .init(name: "Na"),
-                .init(name: "O"),
-                .init(name: "H")
+                .init(name: "Cl")
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "K", index: 2),
+            .init(name: "Oxygen", description: "Solid oxygen is a light blue crystal", elements: [
+                .init(name: "O", index: 2)
+            ]),
+            .init(name: "Dinitrogen", description: "Liquid nitrogen is used as a refrigerant", elements: [
+                .init(name: "N", index: 2)
+            ])
+        ]
+    }
+    
+    /// List of acids
+    public static var acids: [Substance] {
+        return [
+            .init(name: "Sulfuric acid", description: "Sulfuric acid is used in car batteries", elements: [
+                .init(name: "H", index: 2),
                 .init(name: "S"),
                 .init(name: "O", index: 4)
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "H", index: 2),
-                .init(name: "S"),
+            .init(name: "Nitric acid", description: "Nitric acid is one of the strongest acids", elements: [
+                .init(name: "H"),
+                .init(name: "N"),
                 .init(name: "O", index: 3)
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "Li"),
-                .init(name: "O"),
-                .init(name: "H")
+            .init(name: "Nitrous acid", description: "The diluted nitrous acid solution has a bluish tint", elements: [
+                .init(name: "H"),
+                .init(name: "N"),
+                .init(name: "O", index: 2)
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "S"),
-                .init(name: "O", index: 2),
+            .init(name: "Hydrogen chloride", description: "The concentration of hydrochloric acid in the human stomach is 0.3-0.5%", elements: [
+                .init(name: "H"),
+                .init(name: "Cl")
             ]),
-            .init(name: "?", description: "?", elements: [
-                .init(name: "S"),
-                .init(name: "O", index: 3),
+            .init(name: "Phosphoric acid", description: "Phosphoric acid is used to clean metal surfaces from rust", elements: [
+                .init(name: "H", index: 3),
+                .init(name: "P"),
+                .init(name: "O", index: 4)
             ])
         ]
     }
