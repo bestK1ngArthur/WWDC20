@@ -4,9 +4,6 @@
 [👈 To information](@previous)
 
 To play the game сlick and drag on the screen to create a chemical formula.
-
-### Make sure the assitant editor and live view are selected:
-![Assitant Editor](assistantEditor.png)
 */
 import PlaygroundSupport
 import SpriteKit
