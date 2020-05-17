@@ -12,59 +12,18 @@ import GameplayKit
 
 class GameViewController: UIViewController {
 
+    private let gameField: GameField = (5, 5)
+    private let substances = Substance.substances(from: "SubstancesDB")
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
-            
-//            let substances: [Substance] = [
-//                .init(name: "Water", description: "?", elements: [
-//                    .init(name: "H", index: 2),
-//                    .init(name: "O")
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "H", index: 2),
-//                    .init(name: "S"),
-//                    .init(name: "O", index: 4)
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "Na"),
-//                    .init(name: "O"),
-//                    .init(name: "H")
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "K", index: 2),
-//                    .init(name: "S"),
-//                    .init(name: "O", index: 4)
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "H", index: 2),
-//                    .init(name: "S"),
-//                    .init(name: "O", index: 3)
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "Li"),
-//                    .init(name: "O"),
-//                    .init(name: "H")
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "S"),
-//                    .init(name: "O", index: 2),
-//                ]),
-//                .init(name: "?", description: "?", elements: [
-//                    .init(name: "S"),
-//                    .init(name: "O", index: 3),
-//                ])
-//            ]
-            
-            let substances = Substance.substances(from: "substances")
-            
-            let field: GameField = (4, 4)
-            
+                        
             let configuration = GameConfiguration(
-                field: field,
-                componentWidth: 100,
-                componentDistance: 30
+                field: gameField,
+                componentWidth: 70,
+                componentDistance: 20
             )
             
             let fieldFormer = StandartGameFieldFormer(
@@ -75,7 +34,7 @@ class GameViewController: UIViewController {
             )
             
             let master = GameMaster(
-                field: field,
+                field: gameField,
                 fieldFormer: fieldFormer,
                 substances: substances
             )
@@ -91,21 +50,6 @@ class GameViewController: UIViewController {
             // Present the scene
             view.presentScene(scene)
             view.ignoresSiblingOrder = true
-            
-            view.showsFPS = true
-            view.showsNodeCount = true
-        }
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
         }
     }
 

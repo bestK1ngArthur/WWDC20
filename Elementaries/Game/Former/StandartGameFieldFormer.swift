@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// **StandartGameFieldFormer** is standart alghorhytm to fill all free cells of game field
 class StandartGameFieldFormer: GameFieldFormer {
     private let minComponentsCount: Int
     private let attemptsChainCount: Int
@@ -19,6 +20,7 @@ class StandartGameFieldFormer: GameFieldFormer {
         self.attemptsChainCount = attemptsChainCount
     }
     
+    /// Find uniqual chain for count in matrix
     func findChain(for componentsMatrix: GameMatrix, componentsCount: Int) -> GameMatrixGroup? {
         self.matrix = componentsMatrix
               

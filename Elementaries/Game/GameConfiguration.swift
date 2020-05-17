@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Game interface configuration
 struct GameConfiguration {
     let field: GameField
     let componentWidth: CGFloat

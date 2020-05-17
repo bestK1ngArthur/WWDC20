@@ -227,7 +227,7 @@ class GameScene: SKScene {
         helpLabel.position = .init(x: 0, y: y)
     
         helpLabel.numberOfLines = 0
-        helpLabel.preferredMaxLayoutWidth = frame.width - 2 * configuration.componentWidth
+        helpLabel.preferredMaxLayoutWidth = frame.width - 4 * configuration.componentWidth
         
         addChild(helpLabel)
     }

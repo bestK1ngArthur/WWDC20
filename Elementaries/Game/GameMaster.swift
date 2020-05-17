@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Game field configuration
 typealias GameField = (rows: Int, columns: Int)
 typealias GameAnswer = (components: [Substance.Component], chain: GameMatrixGroup)
 
@@ -17,6 +18,7 @@ enum GameAnswerResult {
     case unspecified
 }
 
+/// **GameMaster** controls the game process
 class GameMaster {
     private(set) var matrix: GameMatrix = []
     
@@ -33,7 +35,8 @@ class GameMaster {
         
         formMatrix()
     }
-        
+    
+    /// Returns answers result
     func check(answer: GameAnswer) -> GameAnswerResult {
         let answerIsCorrect = answers.contains { currentAnswer in
             groupsIsEqual(first: currentAnswer.chain, second: answer.chain) &&
@@ -74,18 +77,12 @@ class GameMaster {
             }
             matrix.append(row)
         }
-                
-//        matrix = [
-//            ["", "", "X", ""],
-//            ["", "X", "X", ""],
-//            ["", "X", "X", "X"],
-//            ["", "X", "X", "X"]
-//        ]
         
+        // Shuffle substances
         let suffledSubstances = substances.shuffled()
+        
+        // Find chains for substances & fill field
         for substance in suffledSubstances {
-            print("Substance: \(substance.components.joined())")
-            
             guard let chain = fieldFormer.findChain(for: matrix, componentsCount: substance.components.count) else {
                 continue
             }
@@ -96,10 +93,8 @@ class GameMaster {
                 matrix[matrixIndex.row][matrixIndex.column] = component
             }
             
+            // Save answers to check in future
             answers.append((components, chain))
-            
-            printMatrix()
-            print("")
         }
     }
     
@@ -118,18 +113,5 @@ class GameMaster {
         }
     
         return isEqual
-    }
-    
-    private func printMatrix() {
-        
-        for row in matrix {
-            var rowText = row.reduce("") { result, component in
-                result + " \(component) |"
-            }
-            
-            rowText.removeLast()
-
-            print("[\(rowText)]")
-        }
     }
 }

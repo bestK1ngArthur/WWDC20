@@ -13,6 +13,7 @@ typealias GameMatrix = [[Substance.Component]]
 typealias GameMatrixIndex = (row: Int, column: Int)
 typealias GameMatrixGroup = [GameMatrixIndex]
 
+/// **GameFieldFormer** is responsible for the algorithm for filling the playing field
 protocol GameFieldFormer {
     func findChain(for componentsMatrix: GameMatrix, componentsCount: Int) -> GameMatrixGroup?
 }
